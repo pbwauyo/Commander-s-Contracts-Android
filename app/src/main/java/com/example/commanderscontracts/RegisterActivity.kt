@@ -8,7 +8,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        overridePendingTransition(R.anim.go_in, R.anim.go_out);
+        overridePendingTransition(R.anim.go_in, R.anim.go_out)
     }
 
 

@@ -2,6 +2,6 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item android:drawable="@drawable/circle"/>
-    <item android:drawable="@android:drawable/ic_dialog_info"/>
+    <item android:drawable="@drawable/commanderlogo"/>
 
 </layer-list>
