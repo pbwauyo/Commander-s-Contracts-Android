@@ -35,19 +35,6 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-//    fun ShowHidePassword(view: View) {
-//
-//        if(view.getId()==R.id.show_pass_btn){
-//            if(inputPasswordLogin.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
-//
-//                ((ImageView)(view)).setImageResource(R.drawable.ic_visibility_off_black);
-//
-//                //Show Password
-//
-//            }
-//        }
-//
-//    }
 
 
     fun ShowHidePass(view:View) {

@@ -152,42 +152,131 @@ android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@+id/inputCompanyPhoneNumber" />
 
 
-    <EditText
-        android:id="@+id/inputPassword"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/password_constraint_one"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/input_bg"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:paddingLeft="20dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="21dp"
         app:layout_constraintEnd_toEndOf="@+id/inputCompanyEmail"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/inputCompanyEmail"
-        app:layout_constraintTop_toBottomOf="@+id/inputCompanyEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/inputCompanyEmail">
+
+        <EditText
+            android:id="@+id/inputPassword"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/input_bg"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <EditText
-        android:id="@+id/inputConfirmPassword"
+        <ImageView
+            android:src="@drawable/ic_visibility_black"
+            android:id="@+id/show_pass_btn_one"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:alpha=".5"
+            android:onClick="ShowHidePass"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/password_constraint_one"
+            app:layout_constraintTop_toTopOf="@+id/password_constraint_one" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/password_constraint_two"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/input_bg"
-        android:ems="10"
-        android:hint="Confirm Password"
-        android:inputType="textPassword"
-        android:paddingLeft="20dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/inputPassword"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/inputPassword"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="21dp"
+        app:layout_constraintEnd_toEndOf="@+id/password_constraint_one"
+        app:layout_constraintStart_toStartOf="@+id/password_constraint_one"
+        app:layout_constraintTop_toBottomOf="@+id/password_constraint_one">
+
+        <EditText
+            android:id="@+id/inputConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/input_bg"
+            android:ems="10"
+            android:hint="Confirm Password"
+            android:inputType="textPassword"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:src="@drawable/ic_visibility_black"
+            android:id="@+id/show_pass_btn_two"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:alpha=".5"
+            android:onClick="ShowHidePassTwo"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/password_constraint_two"
+            app:layout_constraintTop_toTopOf="@+id/password_constraint_two" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--    <EditText-->
+<!--        android:id="@+id/inputPassword"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:background="@drawable/input_bg"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Password"-->
+<!--        android:inputType="textPassword"-->
+<!--        android:paddingLeft="20dp"-->
+<!--        android:paddingTop="5dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        android:paddingBottom="10dp"-->
+<!--        tools:layout_editor_absoluteX="32dp"-->
+<!--        tools:layout_editor_absoluteY="485dp" />-->
+
+
+<!--    <EditText-->
+<!--        android:id="@+id/inputConfirmPassword"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:background="@drawable/input_bg"-->
+<!--        android:ems="10"-->
+<!--        android:hint="Confirm Password"-->
+<!--        android:inputType="textPassword"-->
+<!--        android:paddingLeft="20dp"-->
+<!--        android:paddingTop="5dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        android:paddingBottom="10dp"-->
+<!--        tools:layout_editor_absoluteX="32dp"-->
+<!--        tools:layout_editor_absoluteY="545dp" />-->
 
     <Button
         android:id="@+id/btnRegister"
@@ -199,9 +288,9 @@ android:layout_height="match_parent"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/inputConfirmPassword"
-        app:layout_constraintStart_toStartOf="@+id/inputConfirmPassword"
-        app:layout_constraintTop_toBottomOf="@+id/inputConfirmPassword" />
+        app:layout_constraintEnd_toEndOf="@+id/password_constraint_two"
+        app:layout_constraintStart_toStartOf="@+id/password_constraint_two"
+        app:layout_constraintTop_toBottomOf="@+id/password_constraint_two" />
 
     <TextView
         android:id="@+id/terms_label"
