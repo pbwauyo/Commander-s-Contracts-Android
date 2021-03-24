@@ -54,19 +54,21 @@ fun back(view: View?) {
 
 
     fun ShowHidePass(view:View) {
-        if (view.getId() === R.id.show_pass_btn_one)
+        if (view.id === R.id.show_pass_btn_one)
         {
-            if (inputPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance()))
+            if (inputPassword.transformationMethod.equals(PasswordTransformationMethod.getInstance()))
             {
                 ((view) as ImageView).setImageResource(R.drawable.ic_visibility_off_black)
                 //Show Password
-                inputPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance())
+//
+
+                inputPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
             }
             else
             {
                 ((view) as ImageView).setImageResource(R.drawable.ic_visibility_black)
                 //Hide Password
-                inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance())
+                inputPassword.transformationMethod = PasswordTransformationMethod.getInstance()
             }
 
             // cursor reset his position so we need set position to the end of text
@@ -77,23 +79,23 @@ fun back(view: View?) {
 
 
     fun ShowHidePassTwo(view:View) {
-        if (view.getId() === R.id.show_pass_btn_two)
+        if (view.id === R.id.show_pass_btn_two)
         {
-            if (inputConfirmPassword.getTransformationMethod().equals(PasswordTransformationMethod.getInstance()))
+            if (inputConfirmPassword.transformationMethod.equals(PasswordTransformationMethod.getInstance()))
             {
                 ((view) as ImageView).setImageResource(R.drawable.ic_visibility_off_black)
                 //Show Password
-                inputConfirmPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance())
+                inputConfirmPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
             }
             else
             {
                 ((view) as ImageView).setImageResource(R.drawable.ic_visibility_black)
                 //Hide Password
-                inputConfirmPassword.setTransformationMethod(PasswordTransformationMethod.getInstance())
+                inputConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
             }
 
             // cursor reset his position so we need set position to the end of text
-            inputConfirmPassword.setSelection(inputConfirmPassword.getText().length)
+            inputConfirmPassword.setSelection(inputConfirmPassword.text.length)
         }
     }
 
