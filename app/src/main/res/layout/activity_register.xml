@@ -78,7 +78,7 @@ android:layout_height="match_parent"
 
 
     <EditText
-        android:id="@+id/inputEmail"
+        android:id="@+id/inputCompanyName"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
@@ -110,9 +110,9 @@ android:layout_height="match_parent"
         android:paddingTop="5dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/inputEmail"
-        app:layout_constraintStart_toStartOf="@+id/inputEmail"
-        app:layout_constraintTop_toBottomOf="@+id/inputEmail" />
+        app:layout_constraintEnd_toEndOf="@+id/inputCompanyName"
+        app:layout_constraintStart_toStartOf="@+id/inputCompanyName"
+        app:layout_constraintTop_toBottomOf="@+id/inputCompanyName" />
 
 
     <EditText
@@ -247,36 +247,7 @@ android:layout_height="match_parent"
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--    <EditText-->
-<!--        android:id="@+id/inputPassword"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:background="@drawable/input_bg"-->
-<!--        android:ems="10"-->
-<!--        android:hint="Password"-->
-<!--        android:inputType="textPassword"-->
-<!--        android:paddingLeft="20dp"-->
-<!--        android:paddingTop="5dp"-->
-<!--        android:paddingRight="10dp"-->
-<!--        android:paddingBottom="10dp"-->
-<!--        tools:layout_editor_absoluteX="32dp"-->
-<!--        tools:layout_editor_absoluteY="485dp" />-->
 
-
-<!--    <EditText-->
-<!--        android:id="@+id/inputConfirmPassword"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:background="@drawable/input_bg"-->
-<!--        android:ems="10"-->
-<!--        android:hint="Confirm Password"-->
-<!--        android:inputType="textPassword"-->
-<!--        android:paddingLeft="20dp"-->
-<!--        android:paddingTop="5dp"-->
-<!--        android:paddingRight="10dp"-->
-<!--        android:paddingBottom="10dp"-->
-<!--        tools:layout_editor_absoluteX="32dp"-->
-<!--        tools:layout_editor_absoluteY="545dp" />-->
 
     <Button
         android:id="@+id/btnRegister"
