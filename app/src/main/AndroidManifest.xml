@@ -12,22 +12,22 @@
 
         <activity android:name=".ForgotPasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/NoActionBarTheme">
 
         </activity>
 
 
         <activity android:name=".RegisterActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/NoActionBarTheme">
         </activity>
 
         <activity android:name=".LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/NoActionBarTheme">
 
         </activity>
 
