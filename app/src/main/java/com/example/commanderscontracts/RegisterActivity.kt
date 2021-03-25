@@ -2,7 +2,6 @@ package com.example.commanderscontracts
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -57,7 +56,7 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
-        btnRegister.setOnClickListener {
+        new_contract_btn.setOnClickListener {
             performRegister()
 
         }
@@ -255,6 +254,15 @@ class RegisterActivity : AppCompatActivity() {
 
 
                     saveUserToFirebaseDataBase(it.toString())
+
+
+                    //=====LAUNCH ACTIVITY
+
+                    val intent = Intent(this, NewOrExistingContracts::class.java)
+
+                    //clear all activities on the stack
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
 
                 }
 
