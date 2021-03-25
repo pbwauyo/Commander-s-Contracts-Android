@@ -62,106 +62,9 @@ class RegisterActivity : AppCompatActivity() {
 
         btnRegister.setOnClickListener {
 
-            val name = inputCompanyName.text.toString().trim()
-            val address = inputCompanyAddress.text.toString().trim()
-            val phone = inputCompanyPhoneNumber.text.toString().trim()
-            val email = inputCompanyEmail.text.toString().trim()
-            val password = inputPassword.text.toString().trim()
-            val confirmPassword = inputConfirmPassword.text.toString().trim()
-
-            if (name.isEmpty()){
-                inputCompanyName.error = "Company Name Required."
-                inputCompanyName.requestFocus()
-                return@setOnClickListener
-
-            }
-
-            if (address.isEmpty()){
-                inputCompanyAddress.error = "Company Address Required."
-                inputCompanyAddress.requestFocus()
-                return@setOnClickListener
-
-            }
-
-            if (phone.isEmpty()){
-                inputCompanyPhoneNumber.error = "Company Phone Required."
-                inputCompanyPhoneNumber.requestFocus()
-                return@setOnClickListener
-
-            }
 
 
-            if (email.isEmpty()){
-                inputCompanyEmail.error = "Company E-mail Required."
-                inputCompanyEmail.requestFocus()
-                return@setOnClickListener
-
-            }
-
-            if (!isValidEmail(email)) {
-                // Toast.makeText(this, "Email address is not valid", Toast.LENGTH_SHORT).show()
-                inputCompanyEmail.error = "Email address is not valid"
-                inputCompanyEmail.requestFocus()
-                inputCompanyEmail.isEnabled = true
-                return@setOnClickListener
-
-            }
-
-
-            if (password.isEmpty()){
-                inputPassword.error = "Password Required."
-                inputPassword.requestFocus()
-                return@setOnClickListener
-
-            }
-
-
-            if (confirmPassword.isEmpty()){
-                inputConfirmPassword.error = "Confirm Password Required."
-                inputConfirmPassword.requestFocus()
-                return@setOnClickListener
-
-            }
-
-
-            if (password.length < 8) {
-                inputPassword.error = "Password should be atleast 8 characters"
-                inputPassword.requestFocus()
-                inputPassword.isEnabled = true
-
-                return@setOnClickListener
-
-            }
-
-
-            if (confirmPassword.length < 8) {
-                inputConfirmPassword.error = "Password should be atleast 8 characters"
-                inputConfirmPassword.requestFocus()
-                inputConfirmPassword.isEnabled = true
-
-                return@setOnClickListener
-
-            }
-
-
-            if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(confirmPassword)) {
-                if(!password.equals(confirmPassword)) {
-                    inputConfirmPassword.error = "The two passwords do not match"
-                    inputConfirmPassword.requestFocus()
-                    inputConfirmPassword.isEnabled = true
-                    return@setOnClickListener
-
-                } else {
-                    //Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-
-
-
-
-
-
+            performRegister()
 
 
 
@@ -176,8 +79,122 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
+    private fun performRegister() {
 
 
+
+        val name = inputCompanyName.text.toString().trim()
+        val address = inputCompanyAddress.text.toString().trim()
+        val phone = inputCompanyPhoneNumber.text.toString().trim()
+        val email = inputCompanyEmail.text.toString().trim()
+        val password = inputPassword.text.toString().trim()
+        val confirmPassword = inputConfirmPassword.text.toString().trim()
+
+        if (name.isEmpty()){
+            inputCompanyName.error = "Company Name Required."
+            inputCompanyName.requestFocus()
+            return
+
+        }
+
+        if (address.isEmpty()){
+            inputCompanyAddress.error = "Company Address Required."
+            inputCompanyAddress.requestFocus()
+            return
+
+        }
+
+        if (phone.isEmpty()){
+            inputCompanyPhoneNumber.error = "Company Phone Required."
+            inputCompanyPhoneNumber.requestFocus()
+            return
+
+        }
+
+
+        if (email.isEmpty()){
+            inputCompanyEmail.error = "Company E-mail Required."
+            inputCompanyEmail.requestFocus()
+            return
+
+        }
+
+        if (!isValidEmail(email)) {
+            // Toast.makeText(this, "Email address is not valid", Toast.LENGTH_SHORT).show()
+            inputCompanyEmail.error = "Email address is not valid"
+            inputCompanyEmail.requestFocus()
+            inputCompanyEmail.isEnabled = true
+            return
+
+        }
+
+
+        if (password.isEmpty()){
+            inputPassword.error = "Password Required."
+            inputPassword.requestFocus()
+            return
+
+        }
+
+
+        if (confirmPassword.isEmpty()){
+            inputConfirmPassword.error = "Confirm Password Required."
+            inputConfirmPassword.requestFocus()
+            return
+
+        }
+
+
+        if (password.length < 8) {
+            inputPassword.error = "Password should be atleast 8 characters"
+            inputPassword.requestFocus()
+            inputPassword.isEnabled = true
+
+            return
+
+        }
+
+
+        if (confirmPassword.length < 8) {
+            inputConfirmPassword.error = "Password should be atleast 8 characters"
+            inputConfirmPassword.requestFocus()
+            inputConfirmPassword.isEnabled = true
+
+            return
+
+        }
+
+
+        if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(confirmPassword)) {
+            if(!password.equals(confirmPassword)) {
+                inputConfirmPassword.error = "The two passwords do not match"
+                inputConfirmPassword.requestFocus()
+                inputConfirmPassword.isEnabled = true
+                return
+
+            } else {
+                //Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        //========FIREBASE======
+        
+
+
+
+    }
+
+
+
+
+
+
+    //fun to upload image to firebase
+    private fun uploadImageToFirebaseStorage() {
+
+
+    }
 
     //======Check if email is valid=====
     private fun isValidEmail(target: CharSequence?): Boolean {

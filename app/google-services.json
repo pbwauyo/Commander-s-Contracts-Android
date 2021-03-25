@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "995744869097",
+    "project_id": "commander-s-contracts",
+    "storage_bucket": "commander-s-contracts.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995744869097:android:572935edb72162df221e78",
+        "android_client_info": {
+          "package_name": "com.example.commanderscontracts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995744869097-3m6mr37fc1lse96dlgumfk2ka34n1eu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFLJAIB0o2BshxwqBMLk-FrySnfmIkz4o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995744869097-3m6mr37fc1lse96dlgumfk2ka34n1eu2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "995744869097-bjsvtnid9a2grhtue7ghdoa848p1knvp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.commandertechnology.CommanderContracts"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
