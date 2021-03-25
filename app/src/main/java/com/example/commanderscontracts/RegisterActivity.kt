@@ -13,12 +13,14 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : AppCompatActivity() {
 
-    var selectedPhotoUri: Uri? = null  //global variable, because we need to access it
+    var selectedPhotoUri: Uri? = null  //global variable, because we need to access it. Location where the image is stored on the device
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,26 +54,10 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
-
         btnRegister.setOnClickListener {
-
-
-
             performRegister()
 
-
-
         }
-
-
-
 
 
 
@@ -80,9 +66,6 @@ class RegisterActivity : AppCompatActivity() {
 
 
     private fun performRegister() {
-
-
-
         val name = inputCompanyName.text.toString().trim()
         val address = inputCompanyAddress.text.toString().trim()
         val phone = inputCompanyPhoneNumber.text.toString().trim()
@@ -178,9 +161,57 @@ class RegisterActivity : AppCompatActivity() {
         }
 
 
-        //========FIREBASE======
-        
 
+
+        //========firebase auth to perform create user with email and password====
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+
+                //else if successfull
+                Log.d("Main", "successfully created user with the UId: ${it.result?.user?.uid}")
+
+
+                //Then we store image to firebase
+                uploadImageToFirebaseStorage()
+
+            }
+            .addOnFailureListener {
+                Log.d("Main", "Failed to create user ${it.message}")
+                Toast.makeText(this, "Failed to create user ${it.message}", Toast.LENGTH_LONG).show()
+            }
+
+
+    }
+
+
+
+
+    //==============we capture the result from photo selector==========
+//=========the method is called when the intent of photo selector is finished======
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        //Do a couple of checks
+
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
+            //1. we proceed and check what selected image was ---
+            Log.d("RegisterActivity", "photo was selected")
+
+            //2. we have to figure which photo it is inside out app, the pass data has data, uri will represent the location of where the imahe is stored in the device
+
+            val selectedPhotoUri = data.data
+            //3. we can use the uri to get access to the image as a bitmap
+
+            val bitmap =  MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
+
+            //4. pass it inside the button
+            val bitmapDrawable = BitmapDrawable(bitmap)
+            select_photo_register_button.setBackgroundDrawable(bitmapDrawable)
+
+
+
+        }
 
 
     }
@@ -192,6 +223,8 @@ class RegisterActivity : AppCompatActivity() {
 
     //fun to upload image to firebase
     private fun uploadImageToFirebaseStorage() {
+
+
 
 
     }
@@ -276,33 +309,6 @@ fun back(view: View?) {
 
 
 
-    //we capture the result from photo selector
-//the method is called when the intent of photo selector is finished
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        //Do a couple of checks
-
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            //1. we proceed and check what selected image was ---
-            Log.d("RegisterActivity", "photo was selected")
-
-            //2. we have to figure which photo it is inside out app, the pass data has data, uri will represent the location of where the imahe is stored in the device
-
-            val selectedPhotoUri = data.data
-            //3. we can use the uri to get access to the image as a bitmap
-
-            val bitmap =  MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
-
-            //4. pace it inside the button
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            select_photo_register_button.setBackgroundDrawable(bitmapDrawable)
-
-
-
-        }
-
-
-    }
 
 }

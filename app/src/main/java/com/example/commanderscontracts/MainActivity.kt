@@ -3,6 +3,7 @@ package com.example.commanderscontracts
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,10 +18,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        login_btn.setOnClickListener {
+        login_btn_main.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             //overridePendingTransition(R.anim.slide_out_left, R.anim.slide_out_right)
+
+            Log.d("MainActivity", "Main Activity")
         }
 
 

@@ -5,9 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
+
+
 
 
 class LoginActivity : AppCompatActivity() {
@@ -15,6 +20,14 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         overridePendingTransition(R.anim.go_in, R.anim.go_out)
+
+
+
+        btnLogin.setOnClickListener {
+
+            performLogin()
+
+        }
 
 
         backToRegister.setOnClickListener {
@@ -31,7 +44,42 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+
+
     }
+
+
+
+
+    private fun performLogin() {
+        val email = inputEmail.text.toString().trim()
+        val password = inputPasswordLogin.text.toString().trim()
+
+        if (email.isEmpty() || password.isEmpty()) {
+
+            // checks for email and password text field to make sure they are not empty
+            Toast.makeText(this, "Please Enter Email Address and Password", Toast.LENGTH_LONG).show()
+            return
+
+        }
+
+
+        //========firebase auth====
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
+                //======else===
+                Log.d("Login", "successfully created user with the UId: ${it.result?.user?.uid}")
+            }
+            .addOnFailureListener {
+                Log.d("Login", "Failed to Login ${it.message}")
+            }
+
+    }
+
+
+
+
 
 
 
