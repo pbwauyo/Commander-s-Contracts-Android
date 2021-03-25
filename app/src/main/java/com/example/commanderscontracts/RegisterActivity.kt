@@ -16,7 +16,10 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -169,7 +172,7 @@ class RegisterActivity : AppCompatActivity() {
                 if (!it.isSuccessful) return@addOnCompleteListener
 
                 //else if successfull
-                Log.d("Main", "successfully created user with the UId: ${it.result?.user?.uid}")
+                Log.d("RegisterActivity", "successfully created user with the UId: ${it.result?.user?.uid}")
 
 
                 //Then we store image to firebase
@@ -177,7 +180,7 @@ class RegisterActivity : AppCompatActivity() {
 
             }
             .addOnFailureListener {
-                Log.d("Main", "Failed to create user ${it.message}")
+                Log.d("RegisterActivity", "Failed to create user ${it.message}")
                 Toast.makeText(this, "Failed to create user ${it.message}", Toast.LENGTH_LONG).show()
             }
 
@@ -200,14 +203,23 @@ class RegisterActivity : AppCompatActivity() {
 
             //2. we have to figure which photo it is inside out app, the pass data has data, uri will represent the location of where the imahe is stored in the device
 
-            val selectedPhotoUri = data.data
+             selectedPhotoUri = data.data
             //3. we can use the uri to get access to the image as a bitmap
 
             val bitmap =  MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
 
             //4. pass it inside the button
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            select_photo_register_button.setBackgroundDrawable(bitmapDrawable)
+//            val bitmapDrawable = BitmapDrawable(bitmap)
+//            select_photo_register_button.setBackgroundDrawable(bitmapDrawable)
+
+
+            select_photo_imageview_register.setImageBitmap(bitmap)
+
+            //set phot nutton alpho to 0 to prevent hiding
+            select_photo_register_button.alpha = 0f
+
+
+
 
 
 
@@ -224,6 +236,36 @@ class RegisterActivity : AppCompatActivity() {
     //fun to upload image to firebase
     private fun uploadImageToFirebaseStorage() {
 
+        //==check selected photo uri
+        if(selectedPhotoUri == null) return
+
+        val filename = UUID.randomUUID().toString() //random string
+        val ref =  FirebaseStorage.getInstance().getReference("/images/$filename") //save inside images folder
+
+
+        ref.putFile(selectedPhotoUri!!)
+            .addOnSuccessListener {
+                Log.d("RegisterActivity", "Successfully uploaded image: ${it.metadata?.path}")
+
+                //=====After finishing loading the image, we need to have access to file location(download loaction)
+
+                ref.downloadUrl.addOnSuccessListener {
+                    //===file location===
+                    Log.d("RegisterActivity", "File location: $it")
+
+
+                    saveUserToFirebaseDataBase(it.toString())
+
+                }
+
+            }
+
+            .addOnFailureListener{
+                //
+
+                Log.d("RegisterActivity", "Failed to save")
+
+            }
 
 
 
@@ -306,6 +348,36 @@ fun back(view: View?) {
         }
     }
 
+
+
+
+
+//=================SAVE USER DATE TO DATABASE==========
+    private  fun saveUserToFirebaseDataBase(companyLogoImageUrl: String) {
+
+        val uid = FirebaseAuth.getInstance().uid?:""
+
+        val ref =   FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+        val user = User(uid, inputCompanyName.text.toString(), inputCompanyAddress.text.toString(), inputCompanyPhoneNumber.text.toString(),inputCompanyEmail.text.toString(), companyLogoImageUrl)
+
+
+        ref.setValue(user).
+        addOnSuccessListener {
+
+            Log.d("RegisterActivity", "We saved the user to firebase database")
+
+
+        }
+
+    }
+
+
+
+
+
+    ///===Class User ===
+    class User(val uid: String, val companyName:String, val companyAddress:String, val companyPhone:String,val companyEmail:String, val companyLogoImageUrl:String)
 
 
 
