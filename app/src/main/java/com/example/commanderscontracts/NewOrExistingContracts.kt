@@ -5,8 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_new_or_existing_contracts.*
-import kotlinx.android.synthetic.main.activity_register.*
-import kotlinx.android.synthetic.main.activity_register.new_contract_btn
+
 
 class NewOrExistingContracts : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +20,7 @@ class NewOrExistingContracts : AppCompatActivity() {
         verifyUserIsLoggedIn()
 
 
-        new_contract_btn.setOnClickListener {
+        create_new_contract_btn.setOnClickListener {
 
             val intent = Intent(this,NewContractActivity::class.java)
             startActivity(intent)

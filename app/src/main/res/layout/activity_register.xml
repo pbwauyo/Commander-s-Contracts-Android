@@ -260,7 +260,7 @@ android:layout_height="match_parent"
 
 
     <Button
-        android:id="@+id/new_contract_btn"
+        android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
@@ -282,9 +282,9 @@ android:layout_height="match_parent"
         android:textAlignment="center"
         android:textColor="#fff"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/new_contract_btn"
-        app:layout_constraintStart_toStartOf="@+id/new_contract_btn"
-        app:layout_constraintTop_toBottomOf="@+id/new_contract_btn" />
+        app:layout_constraintEnd_toEndOf="@+id/btnRegister"
+        app:layout_constraintStart_toStartOf="@+id/btnRegister"
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
 
     <LinearLayout

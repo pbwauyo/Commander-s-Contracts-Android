@@ -8,7 +8,7 @@
     tools:context=".NewOrExistingContracts">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/client_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -26,7 +26,7 @@
 
 
     <Button
-        android:id="@+id/new_contract_btn"
+        android:id="@+id/create_new_contract_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="50dp"
@@ -41,7 +41,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/client_info" />
 
     <Button
         android:id="@+id/existing_contracts_btn"
@@ -56,7 +56,7 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/new_contract_btn"
-        app:layout_constraintStart_toStartOf="@+id/new_contract_btn"
-        app:layout_constraintTop_toBottomOf="@+id/new_contract_btn" />
+        app:layout_constraintEnd_toEndOf="@+id/create_new_contract_btn"
+        app:layout_constraintStart_toStartOf="@+id/create_new_contract_btn"
+        app:layout_constraintTop_toBottomOf="@+id/create_new_contract_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

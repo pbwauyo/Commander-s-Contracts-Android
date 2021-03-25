@@ -1,9 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:scrollbars="none"
+    android:background="#778899">
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    android:paddingBottom="40dp"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewContractActivity">
 
+
+    <TextView
+        android:id="@+id/client_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="Enter Client's Info"
+        android:textColor="#000"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/inputClientName"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Client Name"
+        android:inputType="text"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/client_info" />
+
+
+        <EditText
+        android:id="@+id/inputClientAddress"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Client Address"
+        android:inputType="text"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputClientName"
+        app:layout_constraintStart_toStartOf="@+id/inputClientName"
+        app:layout_constraintTop_toBottomOf="@+id/inputClientName" />
+
+
+    <EditText
+        android:id="@+id/inputDate"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Date"
+        android:inputType="text"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputClientAddress"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/inputClientAddress"
+        app:layout_constraintTop_toBottomOf="@+id/inputClientAddress" />
+
+    <EditText
+        android:id="@+id/inputDescription"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="text|textMultiLine"
+        android:gravity="top"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputDate"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/inputDate"
+        app:layout_constraintTop_toBottomOf="@+id/inputDate" />
+
+
+    <EditText
+        android:id="@+id/inputClientPrice"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/input_bg"
+        android:ems="10"
+        android:hint="Price"
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputDescription"
+        app:layout_constraintStart_toStartOf="@+id/inputDescription"
+        app:layout_constraintTop_toBottomOf="@+id/inputDescription" />
+
+
+    <Button
+        android:id="@+id/create_new_contract_btn_activity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/btn_bg"
+        android:text="NEXT"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/inputClientPrice"
+        app:layout_constraintStart_toStartOf="@+id/inputClientPrice"
+        app:layout_constraintTop_toBottomOf="@+id/inputClientPrice" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

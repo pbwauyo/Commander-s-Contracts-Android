@@ -56,7 +56,7 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
-        new_contract_btn.setOnClickListener {
+        btnRegister.setOnClickListener {
             performRegister()
 
         }
