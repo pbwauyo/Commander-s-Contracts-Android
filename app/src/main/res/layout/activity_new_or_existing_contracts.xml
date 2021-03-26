@@ -28,12 +28,12 @@
     <Button
         android:id="@+id/create_new_contract_btn"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp"
+        android:layout_height="60dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/btn_bg"
+        android:minHeight="50dp"
         android:text="CREATE NEW CONTRACT"
 
         android:textColor="@color/white"
@@ -46,10 +46,10 @@
     <Button
         android:id="@+id/existing_contracts_btn"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/btn_bg"
+        android:minHeight="50dp"
         android:text="VIEW EXISTING CONTRACTS"
 
 

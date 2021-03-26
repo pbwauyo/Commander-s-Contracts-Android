@@ -50,6 +50,7 @@ class NewContractActivity : AppCompatActivity() {
 
 
     //======Date picker ======
+    //https://stackoverflow.com/questions/14933330/datepicker-how-to-popup-datepicker-when-click-on-edittext
     fun EditText.transformIntoDatePicker(context: Context, format: String, maxDate: Date? = null) {
         isFocusableInTouchMode = false
         isClickable = true
