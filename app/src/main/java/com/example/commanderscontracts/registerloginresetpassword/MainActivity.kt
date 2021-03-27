@@ -1,9 +1,10 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.registerloginresetpassword
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.commanderscontracts.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

@@ -11,21 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ExistingContractsActivity"
+        <activity android:name=".contracts.ExistingContractsActivity"
             android:theme="@style/AppTheme">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NewOrExistingContracts" />
+                android:value=".contracts.NewOrExistingContracts" />
         </activity>
 
-        <activity android:name=".NewContractActivity"
+        <activity android:name=".contracts.NewContractActivity"
             android:theme="@style/AppTheme">
         <meta-data android:name="android.support.PARENT_ACTIVITY"
-            android:value=".NewOrExistingContracts" />
+            android:value=".contracts.NewOrExistingContracts" />
         </activity>
 
 
         <activity
-            android:name=".NewOrExistingContracts"
+            android:name=".contracts.NewOrExistingContracts"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/NoActionBarTheme">
 
@@ -33,24 +33,24 @@
 
 
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".registerloginresetpassword.ForgotPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".registerloginresetpassword.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".registerloginresetpassword.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".registerloginresetpassword.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,7 +1,8 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.contracts
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.commanderscontracts.R
 
 class ExistingContractsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

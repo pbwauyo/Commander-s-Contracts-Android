@@ -1,6 +1,7 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.registerloginresetpassword
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.commanderscontracts.contracts.NewOrExistingContracts
+import com.example.commanderscontracts.R
+import com.example.commanderscontracts.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -21,13 +25,15 @@ import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
-
+    private var mProgressBar: ProgressDialog? = null
     var selectedPhotoUri: Uri? = null  //global variable, because we need to access it. Location where the image is stored on the device
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         overridePendingTransition(R.anim.go_in, R.anim.go_out)
+
+        mProgressBar = ProgressDialog(this)
 
         backToLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -164,14 +170,28 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
+        //progress bar
+        mProgressBar!!.setMessage("Registering User, Please wait...")
+        mProgressBar!!.show()
+
+
+
 
         //========firebase auth to perform create user with email and password====
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
+
+
+
+
                 if (!it.isSuccessful) return@addOnCompleteListener
 
                 //else if successfull
                 Log.d("RegisterActivity", "successfully created user with the UId: ${it.result?.user?.uid}")
+
+
+                //hide progress bar
+                mProgressBar!!.hide()
 
 
                 //Then we store image to firebase
@@ -385,7 +405,7 @@ fun back(view: View?) {
 
 
     ///===Class User ===
-    class User(val uid: String, val companyName:String, val companyAddress:String, val companyPhone:String,val companyEmail:String, val companyLogoImageUrl:String)
+  //  class User(val uid: String, val companyName:String, val companyAddress:String, val companyPhone:String,val companyEmail:String, val companyLogoImageUrl:String)
 
 
 

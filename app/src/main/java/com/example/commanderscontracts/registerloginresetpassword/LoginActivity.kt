@@ -1,5 +1,6 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.registerloginresetpassword
 
+import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.commanderscontracts.R
+import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -16,10 +19,14 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
+    private var mProgressBar: ProgressDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         overridePendingTransition(R.anim.go_in, R.anim.go_out)
+
+        mProgressBar = ProgressDialog(this)
 
 
 
@@ -64,12 +71,22 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+        mProgressBar!!.setMessage("Logging in user...")
+        mProgressBar!!.show()
+
+
         //========firebase auth====
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
+
+
+
+
                 if (!it.isSuccessful) return@addOnCompleteListener
                 //======else===
                 Log.d("Login", "successfully created user with the UId: ${it.result?.user?.uid}")
+
+                mProgressBar!!.hide()
 
                 //=====LAUNCH ACTIVITY
 

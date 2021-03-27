@@ -1,8 +1,10 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.contracts
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.commanderscontracts.registerloginresetpassword.MainActivity
+import com.example.commanderscontracts.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_new_or_existing_contracts.*
 
@@ -22,7 +24,7 @@ class NewOrExistingContracts : AppCompatActivity() {
 
         create_new_contract_btn.setOnClickListener {
 
-            val intent = Intent(this,NewContractActivity::class.java)
+            val intent = Intent(this, NewContractActivity::class.java)
             startActivity(intent)
 
         }
@@ -31,7 +33,7 @@ class NewOrExistingContracts : AppCompatActivity() {
 
         existing_contracts_btn.setOnClickListener {
 
-            val intent = Intent(this,ExistingContractsActivity::class.java)
+            val intent = Intent(this, ExistingContractsActivity::class.java)
             startActivity(intent)
 
         }
@@ -49,7 +51,7 @@ class NewOrExistingContracts : AppCompatActivity() {
 
         if(uid == null) {
             //====user not logged in, redirect to register ====
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             //clear all activities on the stack
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
 

@@ -1,10 +1,11 @@
-package com.example.commanderscontracts
+package com.example.commanderscontracts.contracts
 
 import android.app.DatePickerDialog
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
+import com.example.commanderscontracts.R
 import kotlinx.android.synthetic.main.activity_new_contract.*
 import java.text.SimpleDateFormat
 import java.util.*
