@@ -18,14 +18,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.R
 import com.example.commanderscontracts.models.User
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
+import com.google.firebase.auth.FirebaseAuth as FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {
     private var mProgressBar: ProgressDialog? = null
+
+
+    companion object{
+        val TAG = "RegisterActivity"
+    }
+
     var selectedPhotoUri: Uri? = null  //global variable, because we need to access it. Location where the image is stored on the device
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -275,10 +281,12 @@ class RegisterActivity : AppCompatActivity() {
 
                     saveUserToFirebaseDataBase(it.toString())
 
+                    verifyEmail()
+
 
                     //=====LAUNCH ACTIVITY
 
-                    val intent = Intent(this, NewOrExistingContracts::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
 
                     //clear all activities on the stack
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -294,6 +302,48 @@ class RegisterActivity : AppCompatActivity() {
                 Log.d("RegisterActivity", "Failed to save")
 
             }
+
+
+
+    }
+
+
+
+
+
+    private fun verifyEmail() {
+        val mUser = FirebaseAuth.getInstance()!!.currentUser
+
+        if(!mUser!!.isEmailVerified) {
+
+
+            mUser!!.sendEmailVerification()
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this,
+                                    "Verification Email sent to " + mUser.getEmail(),
+                                    Toast.LENGTH_LONG).show()
+
+                        } else {
+                            Log.e(TAG, "sendEmailVerification", task.exception)
+                            Toast.makeText(this,
+                                    "Failed to send verification email.",
+                                    Toast.LENGTH_LONG).show()
+
+                            Log.e(TAG, task.exception.toString())
+
+                        }
+                    }
+
+
+        } else {
+
+            Toast.makeText(this,
+                    "Please verify your email",
+                    Toast.LENGTH_LONG).show()
+
+        }
+
 
 
 

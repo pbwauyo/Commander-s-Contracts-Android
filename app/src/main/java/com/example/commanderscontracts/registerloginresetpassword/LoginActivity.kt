@@ -31,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
 
         btnLogin.setOnClickListener {
-
             performLogin()
 
         }
@@ -53,6 +52,57 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+    }
+
+
+
+    //=============VERIFY USER ===============
+
+    fun verifyUser() {
+        val mAuth =  FirebaseAuth.getInstance()
+        if ( mAuth!!.currentUser == null) {
+            //Manage error
+            return
+        }
+
+        mAuth!!.currentUser!!.reload()
+                .addOnCompleteListener { reloadTask ->
+                    //After the reload the currentUser can be null because it takes some time in be updated
+                    if (reloadTask.isSuccessful && mAuth!!.currentUser != null) {
+                        val user = mAuth!!.currentUser!!
+                        val verified = user.isEmailVerified
+                        //Check our verified param and continue
+
+                        if (verified) {
+
+                            updateUI()
+
+
+                        } else {
+
+                            Toast.makeText(this@LoginActivity, "Please check your email inbox and verify your email to continue to login.",
+                                    Toast.LENGTH_LONG).show()
+
+                        }
+
+                    } else {
+
+
+                        Toast.makeText(this@LoginActivity, "Please check your email inbox and verify your email to continue to login.",
+                                Toast.LENGTH_SHORT).show()
+
+                    } //Manage error
+                }
+    }
+
+
+    //===========Update UI====
+
+    private fun updateUI() {
+        val intent = Intent(this, NewOrExistingContracts::class.java)
+        //clear all activities on the stack
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
 
@@ -90,10 +140,9 @@ class LoginActivity : AppCompatActivity() {
 
                 //=====LAUNCH ACTIVITY
 
-                val intent = Intent(this, NewOrExistingContracts::class.java)
-                //clear all activities on the stack
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                verifyUser()
+
+
             }
             .addOnFailureListener {
                 Log.d("Login", "Failed to Login ${it.message}")
