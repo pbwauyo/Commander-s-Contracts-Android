@@ -35,6 +35,24 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
+        resend_verification_email.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(view:View) {
+                if (FirebaseAuth.getInstance().currentUser != null)
+                {
+                    FirebaseAuth.getInstance().currentUser.reload()
+                    if (!FirebaseAuth.getInstance().currentUser.isEmailVerified)
+                    {
+                        FirebaseAuth.getInstance().currentUser.sendEmailVerification()
+                        Toast.makeText(this@LoginActivity, "Verification Email Resent!, please check your email inbox..", Toast.LENGTH_LONG).show()
+                    }
+                    else
+                    {
+                        Toast.makeText(this@LoginActivity, "Your email has been verified! You can login now.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        })
+
 
         backToRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -70,6 +88,8 @@ class LoginActivity : AppCompatActivity() {
                     //After the reload the currentUser can be null because it takes some time in be updated
                     if (reloadTask.isSuccessful && mAuth!!.currentUser != null) {
                         val user = mAuth!!.currentUser!!
+                        user.reload()
+
                         val verified = user.isEmailVerified
                         //Check our verified param and continue
 
@@ -107,7 +127,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-
+//===========LOGIN FUN=======
     private fun performLogin() {
         val email = inputEmail.text.toString().trim()
         val password = inputPasswordLogin.text.toString().trim()
@@ -138,6 +158,12 @@ class LoginActivity : AppCompatActivity() {
 
                 mProgressBar!!.hide()
 
+                //=======clear text field ====
+
+                inputEmail.text.clear()
+                inputPasswordLogin.text.clear()
+
+
                 //=====LAUNCH ACTIVITY
 
                 verifyUser()
@@ -147,6 +173,11 @@ class LoginActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Log.d("Login", "Failed to Login ${it.message}")
             }
+
+    }
+
+    //============RESEND VERIFICATION=====
+    fun resendEmailVerification() {
 
     }
 

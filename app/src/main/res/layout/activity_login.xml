@@ -9,6 +9,7 @@
     android:background="#778899">
 
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:paddingBottom="40dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".registerloginresetpassword.LoginActivity">
@@ -198,6 +199,7 @@
 
 
     <LinearLayout
+        android:id="@+id/back_to_login_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -206,6 +208,38 @@
         app:layout_constraintEnd_toEndOf="@+id/btnLogin"
         app:layout_constraintStart_toStartOf="@+id/btnLogin"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin">
+
+        <TextView
+            android:id="@+id/dont_have_verification_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Didn't receive verification Email? "
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/resend_verification_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="Resend"
+            android:textColor="@color/purple_700"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/back_to_login_container"
+        app:layout_constraintStart_toStartOf="@+id/back_to_login_container"
+        app:layout_constraintTop_toBottomOf="@+id/back_to_login_container">
 
         <TextView
             android:id="@+id/dont_have_account_tv"
