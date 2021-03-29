@@ -42,11 +42,15 @@ class LoginActivity : AppCompatActivity() {
                     FirebaseAuth.getInstance().currentUser.reload()
                     if (!FirebaseAuth.getInstance().currentUser.isEmailVerified)
                     {
+//                        resend_verification_email.visibility = View.VISIBLE
+//                        dont_have_verification_email.visibility = View.VISIBLE
                         FirebaseAuth.getInstance().currentUser.sendEmailVerification()
                         Toast.makeText(this@LoginActivity, "Verification Email Resent!, please check your email inbox..", Toast.LENGTH_LONG).show()
                     }
                     else
                     {
+                        resend_verification_email.visibility = View.INVISIBLE
+                        dont_have_verification_email.visibility = View.INVISIBLE
                         Toast.makeText(this@LoginActivity, "Your email has been verified! You can login now.", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -95,6 +99,7 @@ class LoginActivity : AppCompatActivity() {
 
                         if (verified) {
 
+
                             updateUI()
 
 
@@ -102,6 +107,9 @@ class LoginActivity : AppCompatActivity() {
 
                             Toast.makeText(this@LoginActivity, "Please check your email inbox and verify your email to continue to login.",
                                     Toast.LENGTH_LONG).show()
+
+//                            resend_verification_email.visibility = View.VISIBLE
+//                            dont_have_verification_email.visibility = View.VISIBLE
 
                         }
 
@@ -176,10 +184,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    //============RESEND VERIFICATION=====
-    fun resendEmailVerification() {
 
-    }
 
 
 
