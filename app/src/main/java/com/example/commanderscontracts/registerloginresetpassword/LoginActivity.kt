@@ -149,6 +149,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+
+
+
         mProgressBar!!.setMessage("Logging in user...")
         mProgressBar!!.show()
 
