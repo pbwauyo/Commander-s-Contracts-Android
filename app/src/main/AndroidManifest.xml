@@ -31,7 +31,7 @@
         <activity
             android:name=".contracts.NewOrExistingContracts"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/NoActionBarTheme">
+            android:theme="@style/AppTheme">
 
         </activity>
 

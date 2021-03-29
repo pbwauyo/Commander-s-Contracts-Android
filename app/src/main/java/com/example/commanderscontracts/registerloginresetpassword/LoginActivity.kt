@@ -10,15 +10,23 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.example.commanderscontracts.R
+import com.example.commanderscontracts.UserPreferences
+import com.example.commanderscontracts.ViewModel.MainViewModel
 import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-
-
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MainViewModel
+    private lateinit var userPreferences: UserPreferences
     private var mProgressBar: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +34,58 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         overridePendingTransition(R.anim.go_in, R.anim.go_out)
 
+        userPreferences = UserPreferences(this)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         mProgressBar = ProgressDialog(this)
+
+
+
+//        val userPref = UserPreferences(this)
+//
+//        userPref.isLoggedIn.asLiveData().observe(this, Observer{
+//
+//
+//            Toast.makeText(this,"Token is ${it}", Toast.LENGTH_LONG).show()
+//
+//            if(it == true) {
+//
+//                val intent = Intent(this, NewOrExistingContracts::class.java)
+////               //clear all activities on the stack
+//               intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+//               startActivity(intent)
+//
+//            } else {
+//
+//            }
+//
+//        })
+
+
+//        viewModel.readFromDataStore.observe(this,{
+//                isLoggedIn ->
+//
+//           if (isLoggedIn == true) {
+//
+//               val intent = Intent(this, NewOrExistingContracts::class.java)
+//               //clear all activities on the stack
+//               intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+//               startActivity(intent)
+//
+//           } else {
+//
+//               val intent = Intent(this, LoginActivity::class.java)
+//               //clear all activities on the stack
+//               intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+//               startActivity(intent)
+//
+//           }
+//
+//
+//        })
+//
+
 
 
 
@@ -100,7 +159,18 @@ class LoginActivity : AppCompatActivity() {
                         if (verified) {
 
 
+
+
                             updateUI()
+
+
+
+
+
+
+
+//                            viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+//                            viewModel.saveToDataStore(true)
 
 
                         } else {
@@ -127,6 +197,13 @@ class LoginActivity : AppCompatActivity() {
     //===========Update UI====
 
     private fun updateUI() {
+
+
+        lifecycleScope.launch {
+            userPreferences.saveIsLoggedIn(true)
+
+        }
+
         val intent = Intent(this, NewOrExistingContracts::class.java)
         //clear all activities on the stack
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
