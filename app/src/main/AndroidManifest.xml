@@ -14,7 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CaptureSignaturesActivity"></activity>
+        <activity android:name=".CaptureSignaturesActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".contracts.NewContractActivity"/>
+        </activity>
         <activity android:name=".SignatureActivity" />
         <activity
             android:name=".contracts.ExistingContractsActivity"

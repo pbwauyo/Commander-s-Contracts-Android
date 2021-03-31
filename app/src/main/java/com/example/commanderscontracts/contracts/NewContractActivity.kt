@@ -13,6 +13,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
+import com.example.commanderscontracts.CaptureSignaturesActivity
 import com.example.commanderscontracts.R
 import com.example.commanderscontracts.models.User
 import com.example.commanderscontracts.models.UserContract
@@ -59,7 +60,11 @@ class NewContractActivity : AppCompatActivity() {
 
         create_new_contract_btn_activity.setOnClickListener {
 
-            performCreateNewContract()
+            //performCreateNewContract()
+
+
+            val intent = Intent(this, CaptureSignaturesActivity::class.java)
+            startActivity(intent)
 
 
 

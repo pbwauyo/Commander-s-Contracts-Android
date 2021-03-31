@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import com.example.commanderscontracts.CaptureSignaturesActivity
 import com.example.commanderscontracts.registerloginresetpassword.MainActivity
 import com.example.commanderscontracts.R
 import com.example.commanderscontracts.UserPreferences
@@ -53,7 +52,7 @@ class NewOrExistingContracts : AppCompatActivity() {
 
         existing_contracts_btn.setOnClickListener {
 
-            val intent = Intent(this, CaptureSignaturesActivity::class.java)
+            val intent = Intent(this, ExistingContractsActivity::class.java)
             startActivity(intent)
 
         }
