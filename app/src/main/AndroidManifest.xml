@@ -3,7 +3,6 @@
     package="com.example.commanderscontracts">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -15,52 +14,46 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".contracts.ExistingContractsActivity"
+        <activity android:name=".SignatureActivity"></activity>
+        <activity
+            android:name=".contracts.ExistingContractsActivity"
             android:theme="@style/AppTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value=".contracts.NewOrExistingContracts" />
         </activity>
-
-        <activity android:name=".contracts.NewContractActivity"
+        <activity
+            android:name=".contracts.NewContractActivity"
             android:theme="@style/AppTheme">
-        <meta-data android:name="android.support.PARENT_ACTIVITY"
-            android:value=".contracts.NewOrExistingContracts" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".contracts.NewOrExistingContracts" />
         </activity>
-
-
         <activity
             android:name=".contracts.NewOrExistingContracts"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme">
-
-        </activity>
-
-
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity
             android:name=".registerloginresetpassword.ForgotPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".registerloginresetpassword.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".registerloginresetpassword.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
-
         <activity android:name=".registerloginresetpassword.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
     </application>
 

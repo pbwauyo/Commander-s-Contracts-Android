@@ -23,6 +23,12 @@
 
     </style>
 
+    <style name="Dialog.App" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
 
 
 </resources>
