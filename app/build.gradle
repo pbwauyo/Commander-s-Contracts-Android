@@ -82,6 +82,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
 
+    //itext pdf
+    implementation 'com.itextpdf:itextg:5.5.10'
+
+
 
 }
 

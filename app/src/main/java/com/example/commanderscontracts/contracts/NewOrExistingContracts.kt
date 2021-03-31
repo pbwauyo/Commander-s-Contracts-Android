@@ -3,8 +3,10 @@ package com.example.commanderscontracts.contracts
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.example.commanderscontracts.registerloginresetpassword.MainActivity
@@ -18,6 +20,10 @@ import kotlinx.coroutines.launch
 
 
 class NewOrExistingContracts : AppCompatActivity() {
+
+    //ON BACK PRESS TO EXIT AN APP FROM THE DETAILS ACTIVITY
+    private var doubleBackToExitPressedOnce = false
+    private lateinit var backToast: Toast
 
     private lateinit var userPreferences: UserPreferences
 
@@ -73,11 +79,38 @@ class NewOrExistingContracts : AppCompatActivity() {
 
 
     fun finishMyActivity() {
-        finish()
+//        finish()
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_in_right)
     }
 
     override fun onBackPressed() {
+
+        if (doubleBackToExitPressedOnce) {
+
+            backToast.cancel()
+
+            intent = Intent(Intent.ACTION_MAIN)
+
+            intent.addCategory(Intent.CATEGORY_HOME)
+
+
+
+            startActivity(intent)
+
+            super.onBackPressed()
+
+            return
+
+        }
+
+
+        this.doubleBackToExitPressedOnce = true
+
+        backToast =  Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT)
+        backToast.show()
+
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
+
 
         finishMyActivity()
     }
@@ -117,7 +150,7 @@ class NewOrExistingContracts : AppCompatActivity() {
             userPreferences.saveIsLoggedIn(false)
         }
 
-        
+
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         //clear all activities on the stack
