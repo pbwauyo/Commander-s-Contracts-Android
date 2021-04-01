@@ -24,8 +24,5 @@ class SignatureActivity : AppCompatActivity(),OnSignedCaptureListener {
     override fun onSignatureCaptured(bitmap: Bitmap, fileUri: String) {
         imageView.setImageBitmap(bitmap)
 
-
-
-
     }
 }
