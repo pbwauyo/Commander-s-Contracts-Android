@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.signature_pad.*
+import java.util.*
 
 class SignatureDialogFragment(private val onSignedListener: OnSignedCaptureListener) :
     DialogFragment(),
@@ -27,17 +28,21 @@ class SignatureDialogFragment(private val onSignedListener: OnSignedCaptureListe
         buttonCancel.setOnClickListener { dismiss() }
         buttonClear.setOnClickListener { signatureView.clear() }
         buttonOk.setOnClickListener {
-            onSignedListener.onSignatureCaptured(signatureView.getSignatureBitmap(), "")
+
+            val filename = UUID.randomUUID().toString()
+            onSignedListener.onSignatureCaptured(signatureView.getSignatureBitmap(), filename)
             dismiss()
         }
         signatureView.setOnSignedListener(this)
     }
     override fun onStartSigning() {
     }
+
     override fun onSigned() {
         buttonOk.isEnabled = true
         buttonClear.isEnabled = true
     }
+
     override fun onClear() {
         buttonClear.isEnabled = false
         buttonOk.isEnabled = false

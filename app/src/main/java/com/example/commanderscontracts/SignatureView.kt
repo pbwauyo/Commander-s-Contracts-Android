@@ -54,6 +54,7 @@ class SignatureView(context: Context, attrs: AttributeSet?) : View(context, attr
     //Click values
     private var mFirstClick: Long = 0
     private var mCountClick = 0
+
     //Default attribute values
     private val DEFAULT_ATTR_PEN_MIN_WIDTH_PX = 2
     private val DEFAULT_ATTR_PEN_MAX_WIDTH_PX = 3
@@ -294,8 +295,11 @@ class SignatureView(context: Context, attrs: AttributeSet?) : View(context, attr
             }
             if (stop) break
         }
+
         // Image is empty...
         if (!foundPixel) return null
+
+
         // Find yMin
         for (y in 0 until imgHeight) {
             var stop = false
@@ -320,6 +324,8 @@ class SignatureView(context: Context, attrs: AttributeSet?) : View(context, attr
             }
             if (stop) break
         }
+
+
         // Find yMax
         for (y in imgHeight - 1 downTo yMin) {
             var stop = false

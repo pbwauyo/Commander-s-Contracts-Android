@@ -192,7 +192,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 if (!it.isSuccessful) return@addOnCompleteListener
 
-                //else if successfull
+                //else if successful
                 Log.d("RegisterActivity", "successfully created user with the UId: ${it.result?.user?.uid}")
 
 
@@ -240,7 +240,7 @@ class RegisterActivity : AppCompatActivity() {
 
             select_photo_imageview_register.setImageBitmap(bitmap)
 
-            //set phot nutton alpho to 0 to prevent hiding
+            //set photo button alpha to 0 to prevent hiding
             select_photo_register_button.alpha = 0f
 
 
