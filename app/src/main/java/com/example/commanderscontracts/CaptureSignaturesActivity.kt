@@ -115,18 +115,22 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
        // val filename = UUID.randomUUID().toString() //random string
         val ref =  FirebaseStorage.getInstance().getReference("/signatures/$contractorFileName") //save inside images folder
 
-        ref.putFile(clientSignUri!!).addOnSuccessListener{
+        ref.putFile(clientSignUri!!).addOnSuccessListener{ it ->
             Log.d("CaptureActivity", "Successfully uploaded image: ${it.metadata?.path}")
 
             ref.downloadUrl.addOnSuccessListener {
                 //===file location===
-                Log.d("CaptureActivity", "File location: $it")
+                Log.d("CaptureActivity", "File location: ${it}")
+
+                var imageLink = it.toString()
 
 
                // saveContractsToDB(clientSignUri!!)
 
+                saveContractsToDB(imageLink)
 
-                saveContractsToDB()
+
+
 
 
 
@@ -173,7 +177,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
 
-    private fun saveContractsToDB() {
+    private fun saveContractsToDB(clientSignImageUri: String) {
 
         mProgressBar!!.setMessage("Saving Contract...")
         mProgressBar!!.show()
@@ -182,6 +186,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         val currentUserId  = FirebaseAuth.getInstance().uid ?: return
 
         val profileLogoUri = NewContractActivity.currentUser?.companyLogoImageUrl ?: return
+
+
 
         //1. get firebase reference
         val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push() //to push will generate automatic node for us in rtd
@@ -194,12 +200,16 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             "clientDescription",
             currentUserId,
             profileLogoUri,
-            "200",
-            clientSignUri.toString()
+                clientSignImageUri,
+
+                "200"
+
         )
 
         reference.setValue(userContract)
             .addOnSuccessListener {
+
+                Log.d("CaptureActivity", "User contracts ${userContract.clientSignUri}")
 
                 //=====hide progress bar===
                 mProgressBar!!.hide()
