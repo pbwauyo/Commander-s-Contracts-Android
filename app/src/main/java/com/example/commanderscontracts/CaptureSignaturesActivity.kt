@@ -18,7 +18,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.commanderscontracts.contracts.ExistingContractsActivity
 import com.example.commanderscontracts.contracts.NewContractActivity
+import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.models.UserContract
 import com.example.commanderscontracts.registerloginresetpassword.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -55,6 +57,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         }
 
+
+
         mProgressBar = ProgressDialog(this)
 
         isUserOrContractor = WhichButton.DEFAULT.ordinal
@@ -77,12 +81,12 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         submit_signature_btn.setOnClickListener{
 
-            if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
+           // if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
                 // do your stuff..
-                Log.d("uploadBtn", "Submit Btn tapped")
+                Log.d("UploadBtn", "Submit Btn tapped")
                 Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
                 uploadImage()
-            }
+          //  }
 
 
         }
@@ -93,25 +97,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     }
 
 
-//    fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<String?>?, grantResults: IntArray
-//    ) {
-//        when (requestCode) {
-//            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // do your stuff
-//            } else {
-//                Toast.makeText(
-//                    this@CaptureSignaturesActivity, "GET_ACCOUNTS Denied",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//            else -> super.onRequestPermissionsResult(
-//                requestCode, permissions!!,
-//                grantResults
-//            )
-//        }
-//    }
+
 
 
 
@@ -147,7 +133,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
                 //=====LAUNCH ACTIVITY
 
-                val intent = Intent(this, LoginActivity::class.java)
+                val intent = Intent(this, NewOrExistingContracts::class.java)
 
                 //clear all activities on the stack
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -176,7 +162,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     }
 
 
-    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path: String =
@@ -184,8 +170,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         return Uri.parse(path)
     }
 
-    private fun saveContractsToDB() {
 
+
+
+    private fun saveContractsToDB() {
 
         mProgressBar!!.setMessage("Saving Contract...")
         mProgressBar!!.show()
@@ -234,7 +222,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
          // clientSignUri = getImageUriFromBitmap(this,bitmap)
 
-            clientSignUri = getImageUri(this, bitmap)
+            clientSignUri = getImageUriFromBitmap(this, bitmap)
 
             clientBitMap = bitmap
             clientFileName = fileUri
@@ -253,7 +241,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
             Log.d("CaptureSignature", "CONTRACTOR  BITMAP: ${bitmap} ")
 
-           // contractorSignUri = getImageUriFromBitmap(this,bitmap)
+            contractorSignUri = getImageUriFromBitmap(this,bitmap)
             contractorFileName = fileUri
 
             Log.d("CaptureSignature", " Contractor BitmapUri ${contractorSignUri}")
@@ -297,9 +285,12 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 //    }
 
 
-    val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
 
-    fun checkPermissionREAD_EXTERNAL_STORAGE(
+
+    //https://stackoverflow.com/questions/37672338/java-lang-securityexception-permission-denial-reading-com-android-providers-me/37672627
+    private val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
+
+    private fun checkPermissionREAD_EXTERNAL_STORAGE(
         context: Context?
     ): Boolean {
         val currentAPIVersion = Build.VERSION.SDK_INT
@@ -315,7 +306,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                     )
                 ) {
                     showDialog(
-                        "External storage", context,
+                        "External Storage", context,
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     )
                 } else {
@@ -342,8 +333,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     ) {
         val alertBuilder: AlertDialog.Builder =  AlertDialog.Builder(context)
         alertBuilder.setCancelable(true)
-        alertBuilder.setTitle("Permission necessary")
-        alertBuilder.setMessage("$msg permission is necessary")
+        alertBuilder.setTitle("Permission Necessary")
+        alertBuilder.setMessage("$msg permission is necessary to enable the App capture signatures")
         alertBuilder.setPositiveButton(android.R.string.yes,
             DialogInterface.OnClickListener { dialog, which ->
                 ActivityCompat.requestPermissions(
