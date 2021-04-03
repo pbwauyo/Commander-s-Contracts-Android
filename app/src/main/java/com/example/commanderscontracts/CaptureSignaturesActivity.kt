@@ -93,32 +93,32 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         //====Set title
         supportActionBar?.title = "CAPTURE SIGNATURES"
 
-            contractor_signature_button.setOnClickListener {
+        contractor_signature_button.setOnClickListener {
 
-                isUserOrContractor = WhichButton.CONTRACTOR_SIGN.ordinal
+            isUserOrContractor = WhichButton.CONTRACTOR_SIGN.ordinal
 
 
-                showDialog()
-            }
+            showDialog()
+        }
 
-            client_signature_button.setOnClickListener {
-                showDialog()
+        client_signature_button.setOnClickListener {
+            showDialog()
 
-                isUserOrContractor = WhichButton.CLIENT_SIGN.ordinal
-            }
+            isUserOrContractor = WhichButton.CLIENT_SIGN.ordinal
+        }
 
 
 
         submit_signature_btn.setOnClickListener{
 
-           // if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
-                // do your stuff..
-                Log.d("UploadBtn", "Submit Btn tapped")
-                Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
-              //  uploadImage()
+            // if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
+            // do your stuff..
+            Log.d("UploadBtn", "Submit Btn tapped")
+            Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
+            //  uploadImage()
 
-               uploadUserImages()
-          //  }
+            uploadUserImages()
+            //  }
 
 
 
@@ -150,7 +150,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         if(clientSignUri == null) return
 
-       // val filename = UUID.randomUUID().toString() //random string
+        // val filename = UUID.randomUUID().toString() //random string
         val ref =  FirebaseStorage.getInstance().getReference("/signatures/$contractorFileName") //save inside images folder
 
         ref.putFile(clientSignUri!!).addOnSuccessListener{ it ->
@@ -163,9 +163,9 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 var imageLink = it.toString()
 
 
-               // saveContractsToDB(clientSignUri!!)
+                // saveContractsToDB(clientSignUri!!)
 
-               // saveContractsToDB(imageLink)
+                // saveContractsToDB(imageLink)
 
 
 
@@ -184,12 +184,12 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         }
 
 
-            .addOnFailureListener{
-                //
+                .addOnFailureListener{
+                    //
 
-                Log.d("CaptureActivity", "Failed to save")
+                    Log.d("CaptureActivity", "Failed to save")
 
-            }
+                }
 
 
 
@@ -208,7 +208,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         val bytes = ByteArrayOutputStream()
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path: String =
-            MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+                MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
         return Uri.parse(path)
     }
 
@@ -226,7 +226,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             //https://stackoverflow.com/questions/61050721/download-url-is-getting-as-com-google-android-gms-tasks-zzu441942b-firebase-s/61061743#61061743
 
             //unique Id, so that image is not replaced for multiple upload
-                //storing image by this name
+            //storing image by this name
 
             val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
 
@@ -327,7 +327,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 }
 
                 //return the download url
-               // return@Continuation fileRef.downloadUrl
+                // return@Continuation fileRef.downloadUrl
 
                 fileRef.downloadUrl
 
@@ -337,8 +337,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
                     it.result!!.addOnSuccessListener { task ->
 
-                       var myUri = task.toString()
-                      //  print("$myUri")
+                        var myUri = task.toString()
+                        //  print("$myUri")
 
                         Log.d("ContractorSignature", "Download CONTRACTOR Url: ${myUri}")
 
@@ -395,16 +395,16 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
         //1. get firebase reference
-        val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push() //to push will generate automatic node for us in rtd
+       // val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push() //to push will generate automatic node for us in rtd
 
         val userContract = UserContract(
-            reference.key!!,
-            "clientName",
-            "clientAddress",
-            "clientDate",
-            "clientDescription",
-            currentUserId,
-            profileLogoUri,
+                usersRef!!.key!!,
+                "clientName",
+                "clientAddress",
+                "clientDate",
+                "clientDescription",
+                currentUserId,
+                profileLogoUri,
                 clientSignImageUri,
                 contractorSignImageUri,
 
@@ -412,18 +412,18 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         )
 
-        reference.setValue(userContract)
-            .addOnSuccessListener {
+        usersRef!!.setValue(userContract)
+                .addOnSuccessListener {
 
-                Log.d("CaptureActivity", "User contracts ${userContract.clientSignUri}")
+                    Log.d("CaptureActivity", "User contracts ${userContract.clientSignUri}")
 
-                //=====hide progress bar===
-                mProgressBar!!.hide()
+                    //=====hide progress bar===
+                    mProgressBar!!.hide()
 
-                Log.d("CaptureActivity", "Contract Saved Successfully: ${reference.key}")
+                    Log.d("CaptureActivity", "Contract Saved Successfully: ${usersRef!!.key}")
 
 
-            }
+                }
 
 
 
@@ -436,7 +436,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         if(isUserOrContractor ==  WhichButton.CLIENT_SIGN.ordinal ){
             Log.d("CaptureSignature", "CLIENT BITMAP: ${bitmap} ")
 
-         // clientSignUri = getImageUriFromBitmap(this,bitmap)
+            // clientSignUri = getImageUriFromBitmap(this,bitmap)
 
             clientSignUri = getImageUriFromBitmap(this, bitmap)
 
@@ -484,10 +484,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         val bytes = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path = MediaStore.Images.Media.insertImage(
-            context.contentResolver,
-            bitmap,
-            "Title",
-            null
+                context.contentResolver,
+                bitmap,
+                "Title",
+                null
         )
         return Uri.parse(path.toString())
     }
@@ -507,31 +507,31 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     private val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
 
     private fun checkPermissionREAD_EXTERNAL_STORAGE(
-        context: Context?
+            context: Context?
     ): Boolean {
         val currentAPIVersion = Build.VERSION.SDK_INT
         return if (currentAPIVersion >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(
-                    context!!,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
+                            context!!,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
             ) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        (context as Activity?)!!,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
+                                (context as Activity?)!!,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
                 ) {
                     showDialog(
-                        "External Storage", context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
+                            "External Storage", context,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
                     )
                 } else {
                     ActivityCompat
-                        .requestPermissions(
-                            (context as Activity?)!!,
-                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-                        )
+                            .requestPermissions(
+                                    (context as Activity?)!!,
+                                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                            )
                 }
                 false
             } else {
@@ -544,20 +544,20 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
     fun showDialog(
-        msg: String, context: Context,
-        permission: String
+            msg: String, context: Context,
+            permission: String
     ) {
         val alertBuilder: AlertDialog.Builder =  AlertDialog.Builder(context)
         alertBuilder.setCancelable(true)
         alertBuilder.setTitle("Permission Necessary")
         alertBuilder.setMessage("$msg permission is necessary to enable the App capture signatures")
         alertBuilder.setPositiveButton(android.R.string.yes,
-            DialogInterface.OnClickListener { dialog, which ->
-                ActivityCompat.requestPermissions(
-                    (context as Activity?)!!, arrayOf(permission),
-                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-                )
-            })
+                DialogInterface.OnClickListener { dialog, which ->
+                    ActivityCompat.requestPermissions(
+                            (context as Activity?)!!, arrayOf(permission),
+                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                    )
+                })
         val alert: AlertDialog = alertBuilder.create()
         alert.show()
     }
@@ -580,9 +580,9 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -591,13 +591,13 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 // do your stuff
             } else {
                 Toast.makeText(
-                    this@CaptureSignaturesActivity, "GET_ACCOUNTS Denied",
-                    Toast.LENGTH_SHORT
+                        this@CaptureSignaturesActivity, "GET_ACCOUNTS Denied",
+                        Toast.LENGTH_SHORT
                 ).show()
             }
             else -> super.onRequestPermissionsResult(
-                requestCode, permissions!!,
-                grantResults
+                    requestCode, permissions!!,
+                    grantResults
             )
         }
     }
