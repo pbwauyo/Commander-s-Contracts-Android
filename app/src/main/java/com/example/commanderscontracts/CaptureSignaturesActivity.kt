@@ -18,18 +18,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.commanderscontracts.contracts.ExistingContractsActivity
 import com.example.commanderscontracts.contracts.NewContractActivity
 import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.models.UserContract
-import com.example.commanderscontracts.registerloginresetpassword.LoginActivity
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_capture_signatures.*
 import kotlinx.android.synthetic.main.activity_signature.*
 import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
@@ -40,6 +46,15 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     private var clientSignUri: Uri?  = null
     var clientBitMap: Bitmap?  = null
     private var contractorSignUri: Uri?  = null
+
+    var usersRef:DatabaseReference? = null
+    var firebaseUser:FirebaseUser? = null
+    private var storageRef:StorageReference? = null
+    private var coverChecker: String? = ""
+
+    private var clientSignUrl: String? = null
+
+
 
 
 
@@ -52,6 +67,18 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_signatures)
+
+
+        val uid = FirebaseAuth.getInstance().uid?:""
+
+
+        firebaseUser = FirebaseAuth.getInstance().currentUser
+
+        usersRef = FirebaseDatabase.getInstance().getReference("/user-signatures/$uid").push()
+
+        //val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push()
+
+        storageRef = FirebaseStorage.getInstance().reference.child("signatures")
 
         if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
 
@@ -67,7 +94,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         supportActionBar?.title = "CAPTURE SIGNATURES"
 
             contractor_signature_button.setOnClickListener {
+
                 isUserOrContractor = WhichButton.CONTRACTOR_SIGN.ordinal
+
+
                 showDialog()
             }
 
@@ -85,8 +115,14 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 // do your stuff..
                 Log.d("UploadBtn", "Submit Btn tapped")
                 Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
-                uploadImage()
+              //  uploadImage()
+
+               uploadUserImages()
           //  }
+
+
+
+
 
 
         }
@@ -95,6 +131,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
     }
+
+
 
 
 
@@ -127,7 +165,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
                // saveContractsToDB(clientSignUri!!)
 
-                saveContractsToDB(imageLink)
+               // saveContractsToDB(imageLink)
 
 
 
@@ -175,12 +213,179 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     }
 
 
+    //======UPLOAD IMAGE====
+    private fun uploadUserImages() {
+        val progressBar = ProgressDialog(this)
+
+        progressBar.setMessage("Uploading image, Please wait...")
+        progressBar.setTitle("Image Upload")
+        progressBar.show()
+
+        if(clientSignUri != null) {
+
+            //https://stackoverflow.com/questions/61050721/download-url-is-getting-as-com-google-android-gms-tasks-zzu441942b-firebase-s/61061743#61061743
+
+            //unique Id, so that image is not replaced for multiple upload
+                //storing image by this name
+
+            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+
+            var uploadTask:StorageTask<*>
+
+            uploadTask = fileRef.putFile(clientSignUri!!)
+
+            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if(!task.isSuccessful){
+                    task.exception?.let {
+                        throw it
+
+                    }
 
 
-    private fun saveContractsToDB(clientSignImageUri: String) {
+                }
 
-        mProgressBar!!.setMessage("Saving Contract...")
-        mProgressBar!!.show()
+                //return the download url
+                return@Continuation fileRef.downloadUrl
+            }).addOnCompleteListener{
+
+
+
+                if(it.isSuccessful) {
+
+
+                    it.result!!.addOnSuccessListener{ task ->
+
+                        var downloadUrl = task.toString()
+                        Log.d("CaptureSignature", "Download Url: ${downloadUrl}")
+
+
+                        //==========client signature
+                        if(isUserOrContractor ==  WhichButton.CLIENT_SIGN.ordinal ) {
+                            val mapClientSignature = HashMap<String, Any>()
+                            mapClientSignature["clientSignUri"] = downloadUrl
+                            usersRef!!.updateChildren(mapClientSignature)
+
+
+                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
+
+                        }
+
+
+
+//                        } else {
+//                            //====Contractor Signature====
+//                            val mapContractorSignature = HashMap<String, Any>()
+//                            mapContractorSignature["contractorSignUri"] = downloadUrl
+//
+//                            usersRef!!.updateChildren(mapContractorSignature)
+//
+//                            //change cover to default
+//
+//                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
+//
+//
+//
+//                        }
+
+                        //saveContractsToDB(downloadUrl, "")
+
+                        clientSignUrl = downloadUrl
+
+                    }
+
+
+
+
+                    //=======dismiss progress bar========
+                    progressBar.dismiss()
+
+                }
+            }
+
+        }
+
+
+
+
+        if(contractorSignUri != null) {
+
+            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+
+            var uploadTask:StorageTask<*>
+
+            uploadTask = fileRef.putFile(contractorSignUri!!)
+
+
+            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if(!task.isSuccessful){
+                    task.exception?.let {
+                        throw it
+
+                    }
+
+
+                }
+
+                //return the download url
+               // return@Continuation fileRef.downloadUrl
+
+                fileRef.downloadUrl
+
+            }).addOnCompleteListener{
+
+                if(it.isSuccessful) {
+
+                    it.result!!.addOnSuccessListener { task ->
+
+                       var myUri = task.toString()
+                      //  print("$myUri")
+
+                        Log.d("ContractorSignature", "Download CONTRACTOR Url: ${myUri}")
+
+
+                        Log.d("ContractorSignature", "Download CLIENT Url: ${clientSignUrl}")
+
+
+
+                        //==========client signature
+                        if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
+                            val mapContractorSignature = HashMap<String, Any>()
+                            mapContractorSignature["contractorSignUri"] = myUri
+
+                            usersRef!!.updateChildren(mapContractorSignature)
+
+
+
+                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
+
+
+
+                        }
+
+
+                        saveContractsToDB(clientSignUrl!!, myUri)
+
+                    }
+
+                }
+            }
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+
+    private fun saveContractsToDB(clientSignImageUri: String, contractorSignImageUri: String) {
+
+//        mProgressBar!!.setMessage("Saving Contract...")
+//        mProgressBar!!.show()
 
 
         val currentUserId  = FirebaseAuth.getInstance().uid ?: return
@@ -201,6 +406,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             currentUserId,
             profileLogoUri,
                 clientSignImageUri,
+                contractorSignImageUri,
 
                 "200"
 

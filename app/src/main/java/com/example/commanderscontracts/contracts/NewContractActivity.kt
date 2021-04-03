@@ -125,7 +125,7 @@ class NewContractActivity : AppCompatActivity() {
         //1. get firebase reference
         val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push() //to push will generate automatic node for us in rtd
 
-        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId,profileLogoUri,clientPrice,"")
+        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId,profileLogoUri,clientPrice,"","")
 
         //2. Access the reference and set some value
 

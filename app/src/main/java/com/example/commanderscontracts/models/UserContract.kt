@@ -1,8 +1,8 @@
 package com.example.commanderscontracts.models
 
-class UserContract(val id: String, val clientName: String, val clientAddress: String, val clientDate: String, val clientDesc: String, val clientID: String, val clientProfileLogoUri: String, val clientSignUri: String, val clientPrice: String) {
+class UserContract(var id: String, var clientName: String, var clientAddress: String, var clientDate: String, var clientDesc: String, var clientID: String, var clientProfileLogoUri: String, var clientSignUri: String,var contractorSignUri: String, var clientPrice: String) {
 
 
-    constructor():this("","","","","","","","","")
+    constructor():this("","","","","","","","","","")
 
 }
