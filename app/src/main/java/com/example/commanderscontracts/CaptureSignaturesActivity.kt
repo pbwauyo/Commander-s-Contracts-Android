@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.commanderscontracts.contracts.NewContractActivity
+import com.example.commanderscontracts.contracts.NewContractActivity.Companion.USER_KEY
 import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.models.UserContract
 import com.google.android.gms.tasks.Continuation
@@ -47,6 +48,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     var clientBitMap: Bitmap?  = null
     private var contractorSignUri: Uri?  = null
 
+    var userReturedContracts: UserContract? = null
+
     var usersRef:DatabaseReference? = null
     var firebaseUser:FirebaseUser? = null
     private var storageRef:StorageReference? = null
@@ -67,6 +70,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_signatures)
+
+        userReturedContracts = intent.getParcelableExtra<UserContract>(USER_KEY)
 
 
         val uid = FirebaseAuth.getInstance().uid?:""
@@ -399,16 +404,15 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         val userContract = UserContract(
                 usersRef!!.key!!,
-                "clientName",
-                "clientAddress",
-                "clientDate",
-                "clientDescription",
+                userReturedContracts!!.clientName,
+                userReturedContracts!!.clientAddress,
+                userReturedContracts!!.clientDate,
+                userReturedContracts!!.clientDesc,
                 currentUserId,
                 profileLogoUri,
                 clientSignImageUri,
                 contractorSignImageUri,
-
-                "200"
+                userReturedContracts!!.clientPrice
 
         )
 

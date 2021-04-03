@@ -32,12 +32,21 @@ import java.util.*
 class NewContractActivity : AppCompatActivity() {
 
     private var mProgressBar: ProgressDialog? = null
+    private var userContract: UserContract? = null
+    private var currentUserId: String? = null
+
+    private var profileLogoUri: String? = null
+
+
+
 
 
     //====current user logged in-===
     companion object {
         var currentUser: User? = null
         val TAG = "NewContract"
+        val USER_KEY = "USER_KEY"
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +55,11 @@ class NewContractActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.slide_out_left, R.anim.slide_out_right)
 
         mProgressBar = ProgressDialog(this)
+
+        fetchRequiredData()
+
+
+
 
         //====Set title
         supportActionBar?.title = "NEW CONTRACT"
@@ -62,14 +76,68 @@ class NewContractActivity : AppCompatActivity() {
 
             //performCreateNewContract()
 
+            val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push()
 
+
+            val clientName = inputClientName.text.toString().trim()
+            val clientAddress = inputClientAddress.text.toString().trim()
+            val clientDate = inputDate.text.toString().trim()
+            val clientDescription = inputDescription.text.toString().trim()
+            val clientPrice = inputClientPrice.text.toString().trim()
+
+
+            if (clientName.isEmpty()){
+                inputClientName.error = "Name Required."
+                inputClientName.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            if (clientAddress.isEmpty()){
+                inputClientAddress.error = "Address Required."
+                inputClientAddress.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (clientDate.isEmpty()){
+                inputDate.error = "Date Required."
+                inputDate.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (clientDescription.isEmpty()){
+                inputDescription.error = "Description Required."
+                inputDescription.requestFocus()
+                return@setOnClickListener
+            }
+
+
+            if (clientPrice.isEmpty()){
+                inputClientPrice.error = "Price Required."
+                inputClientPrice.requestFocus()
+                return@setOnClickListener
+            }
+
+            userContract = UserContract("",clientName,clientAddress,clientDate,clientDescription, "","","","",clientPrice)
+
+            Log.d("NewContract"," User Contract: ${userContract}")
             val intent = Intent(this, CaptureSignaturesActivity::class.java)
+            intent.putExtra(USER_KEY, userContract)
             startActivity(intent)
 
 
 
         }
 
+
+    }
+
+
+    private fun fetchRequiredData() {
+
+      //  val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push()
+        currentUserId  = FirebaseAuth.getInstance().uid ?: return
+        profileLogoUri = currentUser?.companyLogoImageUrl ?: return
 
     }
 
@@ -118,14 +186,14 @@ class NewContractActivity : AppCompatActivity() {
         mProgressBar!!.show()
 
 
-        val currentUserId  = FirebaseAuth.getInstance().uid ?: return
+         currentUserId  = FirebaseAuth.getInstance().uid ?: return
 
         val profileLogoUri = currentUser?.companyLogoImageUrl ?: return
 
         //1. get firebase reference
         val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push() //to push will generate automatic node for us in rtd
 
-        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId,profileLogoUri,clientPrice,"","")
+        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId!!,profileLogoUri,clientPrice,"","")
 
         //2. Access the reference and set some value
 
