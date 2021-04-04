@@ -18,10 +18,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.commanderscontracts.contracts.ExistingContractsActivity
 import com.example.commanderscontracts.contracts.NewContractActivity
 import com.example.commanderscontracts.contracts.NewContractActivity.Companion.USER_KEY
 import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.models.UserContract
+import com.example.commanderscontracts.registerloginresetpassword.LoginActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -426,6 +428,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
                     Log.d("CaptureActivity", "Contract Saved Successfully: ${usersRef!!.key}")
 
+                    navigateToExistingContract()
+
+
+
 
                 }
 
@@ -433,6 +439,15 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
     }
 
+
+
+    private fun navigateToExistingContract() {
+        val intent = Intent(this, ExistingContractsActivity::class.java)
+
+        //clear all activities on the stack
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
     //submit_signature_btn
 
     override fun onSignatureCaptured(bitmap: Bitmap, fileUri: String) {
