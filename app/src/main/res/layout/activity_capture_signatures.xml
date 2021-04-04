@@ -16,7 +16,7 @@
     android:paddingBottom="40dp">
 
     <ImageView
-        android:background="@drawable/image_bg"
+
 
         android:scaleType="fitXY"
         android:id="@+id/contractor_image_view"
@@ -47,7 +47,6 @@
 
     <ImageView
         android:layout_centerInParent="true"
-        android:background="@drawable/image_bg"
         android:scaleType="fitXY"
         android:id="@+id/client_image_view"
         android:layout_width="0dp"
