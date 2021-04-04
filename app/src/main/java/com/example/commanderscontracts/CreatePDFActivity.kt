@@ -44,7 +44,7 @@ class CreatePDFActivity : AppCompatActivity() {
             return Observable.fromCallable{
                 val bitMap = Glide.with(context)
                     .asBitmap()
-                    .load(model.clientProfileLogoUri)
+                    .load(model.clientSignUri)
                     .submit()
                     .get()
 
@@ -157,7 +157,7 @@ class CreatePDFActivity : AppCompatActivity() {
             //create Title of Document
             val titleFont = Font(fontName, 36.0f, Font.NORMAL, BaseColor.BLACK)
 
-            PDFUtils.addNewItem(document, "SUPER HEROES", Element.ALIGN_CENTER, titleFont)
+            PDFUtils.addNewItem(document, "CONTRACT ", Element.ALIGN_CENTER, titleFont)
 
 
             //Add more
@@ -165,7 +165,7 @@ class CreatePDFActivity : AppCompatActivity() {
             PDFUtils.addNewItem(document, "Details", Element.ALIGN_CENTER,titleFont)
             PDFUtils.addLineSeparator(document)
 
-            val obervable =
+
 
 //https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/2-observables
             //use RxJava to fetch image and add to PDF
