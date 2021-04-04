@@ -2,6 +2,8 @@ package com.example.commanderscontracts.contracts
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.commanderscontracts.R
@@ -20,6 +22,8 @@ import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 class ExistingContractsActivity : AppCompatActivity() {
+
+    var userContract: UserContract? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_existing_contracts)
@@ -62,7 +66,7 @@ class ExistingContractsActivity : AppCompatActivity() {
 
                     //====convert the value to UserContract object====
 
-                    val userContract = it.getValue(UserContract::class.java)
+                    userContract = it.getValue(UserContract::class.java)
 
 //
 
@@ -72,13 +76,21 @@ class ExistingContractsActivity : AppCompatActivity() {
 
                     if (userContract != null) {
 
-                        adapter.add(ContractListRow(userContract))
+                        adapter.add(ContractListRow(userContract!!))
 
                     }
 
 
-//                    adapter.sortedBy{
-//                        it.clientName
+//
+
+//                    adapter.setOnItemClickListener { item, view ->
+//
+//                        //=====casting as userItem to access the name
+//                        val userItemContract = item as ContractListRow
+//
+//                        showPopupMenu(view)
+//
+//
 //
 //                    }
 
@@ -89,6 +101,7 @@ class ExistingContractsActivity : AppCompatActivity() {
 
 
                 }
+
 
 
             }
@@ -104,4 +117,39 @@ class ExistingContractsActivity : AppCompatActivity() {
 
 
     }
+
+    //=====
+
+//    private fun showPopupMenu(view:View){
+//        val pop_up_menu:PopupMenu = PopupMenu(view.context, view)
+//
+//        pop_up_menu.inflate(R.menu.pop_up_menu)
+//
+//        pop_up_menu.setOnMenuItemClickListener {
+//            item ->
+//
+//            when(item.itemId) {
+//                R.id.action_pop_up_view_pdf -> {
+//
+//                    Log.d("Menu","ViewPDF tapped: ${userContract!!.clientName}")
+//
+//                }
+//
+//                R.id.action_pop_up_share -> {
+//
+//                }
+//            }
+//
+//            true
+//
+//        }
+//        pop_up_menu.show()
+//
+//
+//
+//
+//
+//
+//
+//    }
 }
