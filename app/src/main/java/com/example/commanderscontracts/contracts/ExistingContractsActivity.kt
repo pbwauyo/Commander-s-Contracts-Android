@@ -64,10 +64,7 @@ class ExistingContractsActivity : AppCompatActivity() {
 
                     val userContract = it.getValue(UserContract::class.java)
 
-//                    val sortedList: List<UserContract> = ArrayList()
-//                    if (sortedList.size() > 0) {
-//                        Collections.sort(list, Comparator<Any?> { object1, object2 -> object1.getProfession().compareTo(object2.getProfession()) })
-//                    }
+//
 
 
 
