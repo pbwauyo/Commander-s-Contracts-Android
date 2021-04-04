@@ -1,9 +1,11 @@
 package com.example.commanderscontracts.views
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import com.example.commanderscontracts.CreatePDFActivity
 import com.example.commanderscontracts.R
 import com.example.commanderscontracts.models.UserContract
 import com.xwray.groupie.GroupieViewHolder
@@ -12,7 +14,14 @@ import kotlinx.android.synthetic.main.contract_row.view.*
 import java.security.AccessController.getContext
 
 
+
 class ContractListRow(var userContract: UserContract): Item<GroupieViewHolder>() {
+
+    companion object {
+        val USER_CONTRACT_KEY = "USER_CONTRACT_KEY"
+    }
+
+
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
 
@@ -30,11 +39,14 @@ class ContractListRow(var userContract: UserContract): Item<GroupieViewHolder>()
 
                 when(item.itemId){
                     R.id.action_pop_up_view_pdf -> {
-                        Log.d("Menu","CLIENT sign: ${userContract.clientSignUri}")
-                        Log.d("Menu","CONTRACTOR sign: ${userContract.contractorSignUri}")
-                        Log.d("Menu","CLIENT name : ${userContract.clientName}")
-                        Log.d("Menu","PROFILE LOGO tapped: ${userContract.clientProfileLogoUri}")
-                        Log.d("Menu","DATE tapped: ${userContract.clientDate}")
+
+                        val intent = Intent(v.context, CreatePDFActivity::class.java)
+                        intent.putExtra(USER_CONTRACT_KEY, userContract)
+
+                        Log.d("Menu","User ${userContract.clientName}")
+
+
+                        v.context.startActivity(intent)
 
                     }
 
