@@ -69,8 +69,8 @@ class NewContractActivity : AppCompatActivity() {
 
 
 
-        inputDate.transformIntoDatePicker(this, "MM/dd/yyyy")
-        inputDate.transformIntoDatePicker(this, "MM/dd/yyyy", Date())
+        inputDate.transformIntoDatePicker(this, "MM-dd-yyyy")
+        inputDate.transformIntoDatePicker(this, "MM-dd-yyyy", Date())
 
         create_new_contract_btn_activity.setOnClickListener {
 

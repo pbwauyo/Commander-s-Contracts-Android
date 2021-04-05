@@ -81,7 +81,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
-        usersRef = FirebaseDatabase.getInstance().getReference("/user-signatures/$uid").push()
+        usersRef = FirebaseDatabase.getInstance().getReference("/user-contracts/$uid").push()
 
         //val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push()
 

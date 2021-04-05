@@ -77,7 +77,7 @@ class ExistingContractsActivity : AppCompatActivity() {
     private fun fetchUserContracts() {
 
         val currentUserId  = FirebaseAuth.getInstance().uid ?: return
-        val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").orderByChild("clientName")
+        val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").orderByChild("clientName")
 
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
