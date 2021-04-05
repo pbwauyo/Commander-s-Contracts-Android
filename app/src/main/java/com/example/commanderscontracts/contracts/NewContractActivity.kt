@@ -118,9 +118,14 @@ class NewContractActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            userContract = UserContract("",clientName,clientAddress,clientDate,clientDescription, "","","","",clientPrice)
+            userContract = UserContract("",clientName,clientAddress,clientDate,clientDescription,"", currentUser!!.companyLogoImageUrl,"","",clientPrice, currentUser!!.companyName,
+                currentUser!!.companyAddress,
+                currentUser!!.companyEmail)
 
             Log.d("NewContract"," User Contract: ${userContract}")
+            Log.d("NewContract"," User Contract: ${userContract!!.companyName}")
+            Log.d("NewContract"," User Contract: ${userContract!!.companyAddress}")
+            Log.d("NewContract"," User Contract: ${userContract!!.companyEmail}")
             val intent = Intent(this, CaptureSignaturesActivity::class.java)
             intent.putExtra(USER_KEY, userContract)
             startActivity(intent)
@@ -141,99 +146,99 @@ class NewContractActivity : AppCompatActivity() {
 
     }
 
-    private fun performCreateNewContract() {
-        val clientName = inputClientName.text.toString().trim()
-        val clientAddress = inputClientAddress.text.toString().trim()
-        val clientDate = inputDate.text.toString().trim()
-        val clientDescription = inputDescription.text.toString().trim()
-        val clientPrice = inputClientPrice.text.toString().trim()
-
-
-        if (clientName.isEmpty()){
-            inputClientName.error = "Name Required."
-            inputClientName.requestFocus()
-            return
-        }
-
-
-        if (clientAddress.isEmpty()){
-            inputClientAddress.error = "Address Required."
-            inputClientAddress.requestFocus()
-            return
-        }
-
-        if (clientDate.isEmpty()){
-            inputDate.error = "Date Required."
-            inputDate.requestFocus()
-            return
-        }
-
-        if (clientDescription.isEmpty()){
-            inputDescription.error = "Description Required."
-            inputDescription.requestFocus()
-            return
-        }
-
-
-        if (clientPrice.isEmpty()){
-            inputClientPrice.error = "Price Required."
-            inputClientPrice.requestFocus()
-            return
-        }
-
-
-        mProgressBar!!.setMessage("Saving Contract...")
-        mProgressBar!!.show()
-
-
-         currentUserId  = FirebaseAuth.getInstance().uid ?: return
-
-        val profileLogoUri = currentUser?.companyLogoImageUrl ?: return
-
-        //1. get firebase reference
-        val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push() //to push will generate automatic node for us in rtd
-
-        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId!!,profileLogoUri,clientPrice,"","")
-
-        //2. Access the reference and set some value
-
-        reference.setValue(userContract)
-            .addOnSuccessListener {
-
-                //=====hide progress bar===
-                mProgressBar!!.hide()
-
-                Log.d(TAG, "Contract Saved Successfully: ${reference.key}")
-
-                //createPdf( inputClientName.text.toString())
-
-                val intent = Intent(this, NewOrExistingContracts::class.java)
-                startActivity(intent)
-
-                //-=====clear the text after send tapped===
-
-                inputClientName.text.clear()
-                inputClientAddress.text.clear()
-                inputDate.text.clear()
-                inputDescription.text.clear()
-                inputClientPrice.text.clear()
-
-
-
-
-
-
-        }
-
-
-
-
-
-
-
-
-
-    }
+//    private fun performCreateNewContract() {
+//        val clientName = inputClientName.text.toString().trim()
+//        val clientAddress = inputClientAddress.text.toString().trim()
+//        val clientDate = inputDate.text.toString().trim()
+//        val clientDescription = inputDescription.text.toString().trim()
+//        val clientPrice = inputClientPrice.text.toString().trim()
+//
+//
+//        if (clientName.isEmpty()){
+//            inputClientName.error = "Name Required."
+//            inputClientName.requestFocus()
+//            return
+//        }
+//
+//
+//        if (clientAddress.isEmpty()){
+//            inputClientAddress.error = "Address Required."
+//            inputClientAddress.requestFocus()
+//            return
+//        }
+//
+//        if (clientDate.isEmpty()){
+//            inputDate.error = "Date Required."
+//            inputDate.requestFocus()
+//            return
+//        }
+//
+//        if (clientDescription.isEmpty()){
+//            inputDescription.error = "Description Required."
+//            inputDescription.requestFocus()
+//            return
+//        }
+//
+//
+//        if (clientPrice.isEmpty()){
+//            inputClientPrice.error = "Price Required."
+//            inputClientPrice.requestFocus()
+//            return
+//        }
+//
+//
+//        mProgressBar!!.setMessage("Saving Contract...")
+//        mProgressBar!!.show()
+//
+//
+//         currentUserId  = FirebaseAuth.getInstance().uid ?: return
+//
+//        val profileLogoUri = currentUser?.companyLogoImageUrl ?: return
+//
+//        //1. get firebase reference
+//        val reference = FirebaseDatabase.getInstance().getReference("/user-contracts/$currentUserId").push() //to push will generate automatic node for us in rtd
+//
+//        val userContract = UserContract(reference.key!!,clientName,clientAddress,clientDate,clientDescription,currentUserId!!,profileLogoUri,clientPrice,"","")
+//
+//        //2. Access the reference and set some value
+//
+//        reference.setValue(userContract)
+//            .addOnSuccessListener {
+//
+//                //=====hide progress bar===
+//                mProgressBar!!.hide()
+//
+//                Log.d(TAG, "Contract Saved Successfully: ${reference.key}")
+//
+//                //createPdf( inputClientName.text.toString())
+//
+//                val intent = Intent(this, NewOrExistingContracts::class.java)
+//                startActivity(intent)
+//
+//                //-=====clear the text after send tapped===
+//
+//                inputClientName.text.clear()
+//                inputClientAddress.text.clear()
+//                inputDate.text.clear()
+//                inputDescription.text.clear()
+//                inputClientPrice.text.clear()
+//
+//
+//
+//
+//
+//
+//        }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
 
 
 

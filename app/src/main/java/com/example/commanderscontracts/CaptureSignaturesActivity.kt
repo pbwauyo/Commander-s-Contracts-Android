@@ -414,7 +414,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 profileLogoUri,
                 clientSignImageUri,
                 contractorSignImageUri,
-                userReturedContracts!!.clientPrice
+                userReturedContracts!!.clientPrice,
+                userReturedContracts!!.companyName,
+                userReturedContracts!!.companyAddress,
+                userReturedContracts!!.companyEmail
 
         )
 

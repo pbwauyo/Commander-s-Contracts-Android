@@ -7,25 +7,19 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark
 object PDFUtils {
     @Throws(DocumentException::class)
     fun addNewItem(document: Document, text: String, align: Int, font: Font) {
-
         val chunk = Chunk(text!!, font!!)
-
         val paragraph = Paragraph(chunk)
-
         paragraph.alignment = align
-
         document.add(paragraph)
-
-
     }
+
+
 
     @Throws(DocumentException::class)
     fun addLineSeparator(document: Document) {
         val lineSeparator = LineSeparator()
         lineSeparator.lineColor = BaseColor(0, 0, 0, 68)
-
         addLineSpace(document)
-
         document.add(Chunk(lineSeparator))
 
     }
@@ -45,6 +39,22 @@ object PDFUtils {
 
         p.add(Chunk(VerticalPositionMark()))
         p.add(Chunk(chunkTextRight))
+        document.add(p)
+
+
+    }
+
+
+    @Throws(DocumentException::class)
+    fun addNewItemWithLeft(document: Document, leftText: String, leftFont: Font) {
+//https://youtu.be/O4CqYhepK1o?t=332
+        //https://www.youtube.com/watch?v=z3tWuwEA-Jw
+        val chunkTextLeft = Chunk(leftText, leftFont)
+
+        val p = Paragraph(chunkTextLeft)
+
+        p.add(Chunk(VerticalPositionMark()))
+        //p.add(Chunk(chunkTextRight))
         document.add(p)
 
 

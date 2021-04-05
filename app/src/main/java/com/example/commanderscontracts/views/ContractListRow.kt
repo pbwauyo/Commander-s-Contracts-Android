@@ -45,6 +45,10 @@ class ContractListRow(var userContract: UserContract): Item<GroupieViewHolder>()
 
                         Log.d("Menu","User ${userContract.clientName}")
 
+                        Log.d("Menu","User ${userContract.companyName}")
+                        Log.d("Menu","User ${userContract.companyAddress}")
+                        Log.d("Menu","User ${userContract.companyEmail}")
+
 
                         v.context.startActivity(intent)
 

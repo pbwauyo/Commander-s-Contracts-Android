@@ -7,10 +7,18 @@ import android.os.Bundle
 import android.os.Environment
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.util.Log
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.commanderscontracts.contracts.NewContractActivity
+import com.example.commanderscontracts.models.User
 import com.example.commanderscontracts.models.UserContract
 import com.example.commanderscontracts.views.ContractListRow.Companion.USER_CONTRACT_KEY
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.itextpdf.text.*
 import com.itextpdf.text.pdf.BaseFont
 import com.itextpdf.text.pdf.PdfWriter
@@ -32,6 +40,7 @@ import java.lang.StringBuilder
 class CreatePDFActivity : AppCompatActivity() {
     
     var userContracts: UserContract? = null
+    var currentUser: User? = null
 
 
 
@@ -44,7 +53,7 @@ class CreatePDFActivity : AppCompatActivity() {
             return Observable.fromCallable{
                 val bitMap = Glide.with(context)
                     .asBitmap()
-                    .load(model.clientSignUri)
+                    .load(model.clientProfileLogoUri)
                     .submit()
                     .get()
 
@@ -57,6 +66,47 @@ class CreatePDFActivity : AppCompatActivity() {
 
 
         }
+
+
+
+        fun getClientSignBitMapFromUri(context: Context, model:UserContract, document: Document):Observable<UserContract>{
+
+            return Observable.fromCallable{
+                val bitMap = Glide.with(context)
+                        .asBitmap()
+                        .load(model.clientSignUri)
+                        .submit()
+                        .get()
+
+                val  clientImage = Image.getInstance(bitMapToByteArray(bitMap))
+
+                clientImage.scaleAbsolute(100f,100f)
+                document.add(clientImage)
+                model
+            }
+        }
+
+
+
+        fun getContractorSignBitMapFromUri(context: Context, model:UserContract, document: Document):Observable<UserContract>{
+
+            return Observable.fromCallable{
+                val bitMap = Glide.with(context)
+                        .asBitmap()
+                        .load(model.contractorSignUri)
+                        .submit()
+                        .get()
+
+                val  contractorImage = Image.getInstance(bitMapToByteArray(bitMap))
+
+                contractorImage.scaleAbsolute(100f,100f)
+                document.add(contractorImage)
+                model
+            }
+        }
+
+
+
 
         private fun bitMapToByteArray(bitMap: Bitmap?):ByteArray{
             val stream = ByteArrayOutputStream()
@@ -88,6 +138,8 @@ class CreatePDFActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_p_d_f)
+
+        fetchCurrentUser()
 
         userContracts = intent.getParcelableExtra<UserContract>(USER_CONTRACT_KEY)
 
@@ -157,7 +209,9 @@ class CreatePDFActivity : AppCompatActivity() {
             //create Title of Document
             val titleFont = Font(fontName, 36.0f, Font.NORMAL, BaseColor.BLACK)
 
-            PDFUtils.addNewItem(document, "CONTRACT ", Element.ALIGN_CENTER, titleFont)
+            val bigTitleFont = Font(fontName, 36.0f, Font.NORMAL, colorAccent)
+
+            PDFUtils.addNewItem(document, "CONTRACT", Element.ALIGN_CENTER, bigTitleFont)
 
 
             //Add more
@@ -170,16 +224,47 @@ class CreatePDFActivity : AppCompatActivity() {
 //https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/2-observables
             //use RxJava to fetch image and add to PDF
             Observable.just(userContracts!!).
-            flatMap { model:UserContract -> getBitMapFromUri(this, model,document) }
+            flatMap { model:UserContract ->
+                getBitMapFromUri(this, model,document) }
+
+//            flatMap { model:UserContract ->
+//                getClientSignBitMapFromUri(this, model,document) }
+//
+//            flatMap { model:UserContract ->
+//                getContractorSignBitMapFromUri(this, model,document) }
 
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({model:UserContract ->
                     //on next
-                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientName!!,"",titleFont,titleFont)
+
+                    PDFUtils.addNewItem(document, "CONTRACTOR DETAILS", Element.ALIGN_RIGHT, bigTitleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyName!!,titleFont,titleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyAddress!!,titleFont,titleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyEmail!!,titleFont,titleFont)
                     PDFUtils.addLineSeparator(document)
+
+                    PDFUtils.addNewItem(document, "CLIENT DETAILS", Element.ALIGN_LEFT, bigTitleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientName!!,"",titleFont,titleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientAddress!!,"",titleFont,titleFont)
+                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientDate!!,"",titleFont,titleFont)
+                    PDFUtils.addLineSeparator(document)
+
+
+                    PDFUtils.addNewItem(document, "CONTRACT DESCRIPTION", Element.ALIGN_RIGHT, bigTitleFont)
                     PDFUtils.addNewItem(document, model.clientDesc!!, Element.ALIGN_LEFT, titleFont)
                     PDFUtils.addLineSeparator(document)
+                    PDFUtils.addNewItem(document, "PRICE : $${ model.clientPrice!!}", Element.ALIGN_LEFT, titleFont)
+                    PDFUtils.addLineSeparator(document)
+
+
+                    PDFUtils.addNewItem(document, "FROM : ${ model.clientName!!}", Element.ALIGN_RIGHT, titleFont)
+                    PDFUtils.addLineSeparator(document)
+
+
+                    PDFUtils.addNewItem(document, "SIGNATURES", Element.ALIGN_CENTER, bigTitleFont)
+
+
 
 
                 },{
@@ -225,5 +310,29 @@ class CreatePDFActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
+
+
+
+
+
+    private fun fetchCurrentUser(){
+
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+               currentUser = snapshot.getValue(User::class.java)
+                Log.d("NewContract","Current User: ${NewContractActivity.currentUser?.companyName}")
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+    }
+
 
 }
