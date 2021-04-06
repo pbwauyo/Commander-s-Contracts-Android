@@ -3,7 +3,6 @@ package com.example.commanderscontracts
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_signature.*
 
 class SignatureActivity : AppCompatActivity(),OnSignedCaptureListener {
@@ -11,7 +10,7 @@ class SignatureActivity : AppCompatActivity(),OnSignedCaptureListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signature)
 
-        buttonShowDialog.setOnClickListener { showDialog() }
+        buttonShowClientDialog.setOnClickListener { showDialog() }
 
 
     }
@@ -22,7 +21,7 @@ class SignatureActivity : AppCompatActivity(),OnSignedCaptureListener {
         dialogFragment.show(supportFragmentManager, "signature")
     }
     override fun onSignatureCaptured(bitmap: Bitmap, fileUri: String) {
-        imageView.setImageBitmap(bitmap)
+        client_signature_image_view.setImageBitmap(bitmap)
 
     }
 }

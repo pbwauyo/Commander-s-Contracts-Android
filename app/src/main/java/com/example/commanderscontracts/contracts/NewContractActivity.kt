@@ -13,8 +13,10 @@ import android.os.Environment
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
+import com.example.commanderscontracts.CaptureClientSignature
 import com.example.commanderscontracts.CaptureSignaturesActivity
 import com.example.commanderscontracts.R
+import com.example.commanderscontracts.SignatureActivity
 import com.example.commanderscontracts.models.User
 import com.example.commanderscontracts.models.UserContract
 import com.google.firebase.auth.FirebaseAuth

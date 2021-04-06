@@ -36,7 +36,14 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_capture_signatures.*
 import kotlinx.android.synthetic.main.activity_signature.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -118,18 +125,12 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         submit_signature_btn.setOnClickListener{
 
-            // if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
-            // do your stuff..
+
             Log.d("UploadBtn", "Submit Btn tapped")
             Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
-            //  uploadImage()
+
 
             uploadUserImages()
-            //  }
-
-
-
-
 
 
         }
@@ -295,6 +296,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 //                        }
 
                         //saveContractsToDB(downloadUrl, "")
+
+                        saveContractsToDB(downloadUrl, "")
 
                         clientSignUrl = downloadUrl
 

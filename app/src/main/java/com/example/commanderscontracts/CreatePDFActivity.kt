@@ -2,13 +2,13 @@ package com.example.commanderscontracts
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.commanderscontracts.contracts.NewContractActivity
 import com.example.commanderscontracts.models.User
@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.itextpdf.text.*
 import com.itextpdf.text.pdf.BaseFont
+import com.itextpdf.text.pdf.PdfFormXObject
 import com.itextpdf.text.pdf.PdfWriter
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -30,12 +31,11 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_create_p_d_f.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.*
-import java.lang.StringBuilder
+
 
 class CreatePDFActivity : AppCompatActivity() {
     
@@ -48,7 +48,7 @@ class CreatePDFActivity : AppCompatActivity() {
     companion object{
         private val FILE_PRINT:String = "PDFPrint.pdf"
 
-        fun getBitMapFromUri(context: Context, model:UserContract, document: Document):Observable<UserContract>{
+        fun getBitMapFromUri(context: Context, model: UserContract, document: Document):Observable<UserContract>{
 
             return Observable.fromCallable{
                 val bitMap = Glide.with(context)
@@ -59,7 +59,18 @@ class CreatePDFActivity : AppCompatActivity() {
 
                 val  image = Image.getInstance(bitMapToByteArray(bitMap))
 
-                image.scaleAbsolute(100f,100f)
+
+//                val xObject = PdfFormXObject(Rectangle(850, 600))
+//                val xObjectCanvas = PdfCanvas(xObject, pdfDoc)
+//                xObjectCanvas.ellipse(0, 0, 850, 600)
+//                xObjectCanvas.clip()
+//                xObjectCanvas.newPath()
+//                xObjectCanvas.addImage(image, 100, 0, 0, 100, 0, -600)
+//                val clipped = Image(xObject)
+//                clipped.scale(0.5f, 0.5f)
+//                document.add(clipped)
+
+                image.scaleToFit(80f, 80f)
                 document.add(image)
                 model
             }
@@ -69,7 +80,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
 
 
-        fun getClientSignBitMapFromUri(context: Context, model:UserContract, document: Document):Observable<UserContract>{
+        fun getClientSignBitMapFromUri(context: Context, model: UserContract, document: Document):Observable<UserContract>{
 
             return Observable.fromCallable{
                 val bitMap = Glide.with(context)
@@ -80,7 +91,9 @@ class CreatePDFActivity : AppCompatActivity() {
 
                 val  clientImage = Image.getInstance(bitMapToByteArray(bitMap))
 
-                clientImage.scaleAbsolute(100f,100f)
+
+
+                clientImage.scaleAbsolute(100f, 100f)
                 document.add(clientImage)
                 model
             }
@@ -88,7 +101,11 @@ class CreatePDFActivity : AppCompatActivity() {
 
 
 
-        fun getContractorSignBitMapFromUri(context: Context, model:UserContract, document: Document):Observable<UserContract>{
+        fun getContractorSignBitMapFromUri(
+            context: Context,
+            model: UserContract,
+            document: Document
+        ):Observable<UserContract>{
 
             return Observable.fromCallable{
                 val bitMap = Glide.with(context)
@@ -99,7 +116,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
                 val  contractorImage = Image.getInstance(bitMapToByteArray(bitMap))
 
-                contractorImage.scaleAbsolute(100f,100f)
+                contractorImage.scaleAbsolute(100f, 100f)
                 document.add(contractorImage)
                 model
             }
@@ -110,7 +127,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
         private fun bitMapToByteArray(bitMap: Bitmap?):ByteArray{
             val stream = ByteArrayOutputStream()
-            bitMap!!.compress(Bitmap.CompressFormat.PNG,100,stream)
+            bitMap!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
             return stream.toByteArray()
 
         }
@@ -122,9 +139,9 @@ class CreatePDFActivity : AppCompatActivity() {
         get(){
             val dir = File(
                 Environment.getExternalStorageDirectory()
-                .toString() + File.separator
-                    + resources.getString(R.string.app_name)
-                    + File.separator
+                    .toString() + File.separator
+                        + resources.getString(R.string.app_name)
+                        + File.separator
             )
 
             if(!dir.exists()) dir.mkdir()
@@ -149,7 +166,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
         Dexter.withActivity(this)
             .withPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object: PermissionListener {
+            .withListener(object : PermissionListener {
                 override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
 
                     print_btn.setOnClickListener {
@@ -159,7 +176,11 @@ class CreatePDFActivity : AppCompatActivity() {
                 }
 
                 override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                    Toast.makeText(this@CreatePDFActivity, "Please enable storage", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@CreatePDFActivity,
+                        "Please enable storage",
+                        Toast.LENGTH_LONG
+                    ).show()
 
                 }
 
@@ -180,7 +201,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
 
 
-    private fun createPDFFile(path:String) {
+    private fun createPDFFile(path: String) {
         if(File(path).exists())File(path).delete()
 
         try{
@@ -199,12 +220,16 @@ class CreatePDFActivity : AppCompatActivity() {
             document.addCreator("Tech")
 
             //font setting
-            val colorAccent = BaseColor(0,153,204,255)
+            val colorAccent = BaseColor(0, 153, 204, 255)
             val fontSize = 20.0f
 
 
             //custom font
-            val fontName = BaseFont.createFont("assets/fonts/brandon_medium.otf","UTF-8", BaseFont.EMBEDDED)
+            val fontName = BaseFont.createFont(
+                "assets/fonts/brandon_medium.otf",
+                "UTF-8",
+                BaseFont.EMBEDDED
+            )
 
             //create Title of Document
             val titleFont = Font(fontName, 36.0f, Font.NORMAL, BaseColor.BLACK)
@@ -216,16 +241,17 @@ class CreatePDFActivity : AppCompatActivity() {
 
             //Add more
             PDFUtils.addLineSpace(document)
-            PDFUtils.addNewItem(document, "Details", Element.ALIGN_CENTER,titleFont)
+            PDFUtils.addNewItem(document, "Details", Element.ALIGN_CENTER, titleFont)
             PDFUtils.addLineSeparator(document)
+
 
 
 
 //https://www.raywenderlich.com/books/reactive-programming-with-kotlin/v2.0/chapters/2-observables
             //use RxJava to fetch image and add to PDF
             Observable.just(userContracts!!).
-            flatMap { model:UserContract ->
-                getBitMapFromUri(this, model,document) }
+            flatMap { model: UserContract ->
+                getBitMapFromUri(this, model, document) }
 
 //            flatMap { model:UserContract ->
 //                getClientSignBitMapFromUri(this, model,document) }
@@ -235,43 +261,107 @@ class CreatePDFActivity : AppCompatActivity() {
 
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({model:UserContract ->
+                .subscribe({ model: UserContract ->
                     //on next
 
-                    PDFUtils.addNewItem(document, "CONTRACTOR DETAILS", Element.ALIGN_RIGHT, bigTitleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyName!!,titleFont,titleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyAddress!!,titleFont,titleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,"",model.companyEmail!!,titleFont,titleFont)
+                    PDFUtils.addNewItem(
+                        document,
+                        "CONTRACTOR DETAILS",
+                        Element.ALIGN_RIGHT,
+                        bigTitleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        "",
+                        model.companyName!!,
+                        titleFont,
+                        titleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        "",
+                        model.companyAddress!!,
+                        titleFont,
+                        titleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        "",
+                        model.companyEmail!!,
+                        titleFont,
+                        titleFont
+                    )
                     PDFUtils.addLineSeparator(document)
 
-                    PDFUtils.addNewItem(document, "CLIENT DETAILS", Element.ALIGN_LEFT, bigTitleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientName!!,"",titleFont,titleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientAddress!!,"",titleFont,titleFont)
-                    PDFUtils.addNewItemWithLeftAndRight(document,model.clientDate!!,"",titleFont,titleFont)
+                    PDFUtils.addNewItem(
+                        document,
+                        "CLIENT DETAILS",
+                        Element.ALIGN_LEFT,
+                        bigTitleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        model.clientName!!,
+                        "",
+                        titleFont,
+                        titleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        model.clientAddress!!,
+                        "",
+                        titleFont,
+                        titleFont
+                    )
+                    PDFUtils.addNewItemWithLeftAndRight(
+                        document,
+                        model.clientDate!!,
+                        "",
+                        titleFont,
+                        titleFont
+                    )
                     PDFUtils.addLineSeparator(document)
 
 
-                    PDFUtils.addNewItem(document, "CONTRACT DESCRIPTION", Element.ALIGN_RIGHT, bigTitleFont)
+                    PDFUtils.addNewItem(
+                        document,
+                        "CONTRACT DESCRIPTION",
+                        Element.ALIGN_RIGHT,
+                        bigTitleFont
+                    )
                     PDFUtils.addNewItem(document, model.clientDesc!!, Element.ALIGN_LEFT, titleFont)
                     PDFUtils.addLineSeparator(document)
-                    PDFUtils.addNewItem(document, "PRICE : $${ model.clientPrice!!}", Element.ALIGN_LEFT, titleFont)
+                    PDFUtils.addNewItem(
+                        document,
+                        "PRICE : $${model.clientPrice!!}",
+                        Element.ALIGN_LEFT,
+                        titleFont
+                    )
                     PDFUtils.addLineSeparator(document)
 
 
-                    PDFUtils.addNewItem(document, "FROM : ${ model.clientName!!}", Element.ALIGN_RIGHT, titleFont)
+                    PDFUtils.addNewItem(
+                        document,
+                        "FROM : ${model.clientName!!}",
+                        Element.ALIGN_RIGHT,
+                        titleFont
+                    )
                     PDFUtils.addLineSeparator(document)
 
 
                     PDFUtils.addNewItem(document, "SIGNATURES", Element.ALIGN_CENTER, bigTitleFont)
 
+                    Observable.just(userContracts!!).
+                    flatMap { model: UserContract ->
+                        getClientSignBitMapFromUri(this, model, document) }
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
 
 
-
-                },{
-                        t:Throwable? ->
+                }, { t: Throwable? ->
 
                     //on error toast
-                    Toast.makeText(this,t!!.message,Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, t!!.message, Toast.LENGTH_LONG).show()
 
                 }, {
                     //Oncomplete
@@ -280,7 +370,7 @@ class CreatePDFActivity : AppCompatActivity() {
 
                     //close
                     document.close()
-                    Toast.makeText(this,"Success",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Success", Toast.LENGTH_LONG).show()
 
                     printPDF()
 
@@ -304,9 +394,11 @@ class CreatePDFActivity : AppCompatActivity() {
     private fun printPDF() {
         val printManager = getSystemService(Context.PRINT_SERVICE) as PrintManager
         try{
-            val printDocumentAdapter = PDFDocumentAdapter(StringBuilder(appPath).append(FILE_PRINT).toString(), FILE_PRINT)
-            printManager.print("Document",printDocumentAdapter, PrintAttributes.Builder().build())
-        }catch (e:Exception){
+            val printDocumentAdapter = PDFDocumentAdapter(
+                StringBuilder(appPath).append(FILE_PRINT).toString(), FILE_PRINT
+            )
+            printManager.print("Document", printDocumentAdapter, PrintAttributes.Builder().build())
+        }catch (e: Exception){
             e.printStackTrace()
         }
     }
@@ -320,13 +412,17 @@ class CreatePDFActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
-               currentUser = snapshot.getValue(User::class.java)
-                Log.d("NewContract","Current User: ${NewContractActivity.currentUser?.companyName}")
+                currentUser = snapshot.getValue(User::class.java)
+                Log.d(
+                    "NewContract",
+                    "Current User: ${NewContractActivity.currentUser?.companyName}"
+                )
 
             }
+
             override fun onCancelled(error: DatabaseError) {
 
             }

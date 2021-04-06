@@ -9,7 +9,7 @@
 
 
     <Button
-        android:id="@+id/buttonShowDialog"
+        android:id="@+id/buttonShowClientDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -19,14 +19,14 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/client_signature_image_view"
         app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/client_signature_image_view"
         app:layout_constraintVertical_bias="0.287" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/client_signature_image_view"
         android:layout_width="355dp"
         android:layout_height="376dp"
         android:padding="16dp"
