@@ -14,17 +14,18 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.commanderscontracts.contracts.ExistingContractsActivity
 import com.example.commanderscontracts.contracts.NewContractActivity
 import com.example.commanderscontracts.contracts.NewContractActivity.Companion.USER_KEY
-import com.example.commanderscontracts.contracts.NewOrExistingContracts
 import com.example.commanderscontracts.models.UserContract
-import com.example.commanderscontracts.registerloginresetpassword.LoginActivity
 import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -36,14 +37,10 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_capture_signatures.*
 import kotlinx.android.synthetic.main.activity_signature.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -145,83 +142,6 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
 
-
-
-
-
-
-
-
-
-
-    private fun uploadImage() {
-
-        if(clientSignUri == null) return
-
-        // val filename = UUID.randomUUID().toString() //random string
-        val ref =  FirebaseStorage.getInstance().getReference("/signatures/$contractorFileName") //save inside images folder
-
-        ref.putFile(clientSignUri!!).addOnSuccessListener{ it ->
-            Log.d("CaptureActivity", "Successfully uploaded image: ${it.metadata?.path}")
-
-            ref.downloadUrl.addOnSuccessListener {
-                //===file location===
-                Log.d("CaptureActivity", "File location: ${it}")
-
-                var imageLink = it.toString()
-
-
-                // saveContractsToDB(clientSignUri!!)
-
-                // saveContractsToDB(imageLink)
-
-
-
-
-
-
-
-                //=====LAUNCH ACTIVITY
-
-                val intent = Intent(this, NewOrExistingContracts::class.java)
-
-                //clear all activities on the stack
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-        }
-
-
-                .addOnFailureListener{
-                    //
-
-                    Log.d("CaptureActivity", "Failed to save")
-
-                }
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path: String =
-                MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
-        return Uri.parse(path)
-    }
-
-
-    //======UPLOAD IMAGE====
     private fun uploadUserImages() {
         val progressBar = ProgressDialog(this)
 
@@ -229,173 +149,385 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         progressBar.setTitle("Image Upload")
         progressBar.show()
 
-        if(clientSignUri != null) {
-
-            //https://stackoverflow.com/questions/61050721/download-url-is-getting-as-com-google-android-gms-tasks-zzu441942b-firebase-s/61061743#61061743
-
-            //unique Id, so that image is not replaced for multiple upload
-            //storing image by this name
-
-            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-
-            var uploadTask:StorageTask<*>
-
-            uploadTask = fileRef.putFile(clientSignUri!!)
-
-            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                if(!task.isSuccessful){
-                    task.exception?.let {
-                        throw it
-
-                    }
-
-
+        val clientSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+        var clientSignUploadTask:StorageTask<*>
+        clientSignUploadTask = clientSignFileRef.putFile(clientSignUri!!)
+        clientSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if(!task.isSuccessful){
+                task.exception?.let {
+                    throw it
                 }
+            }
+            clientSignFileRef.downloadUrl
+        }).addOnCompleteListener { task ->
 
-                //return the download url
-                return@Continuation fileRef.downloadUrl
-            }).addOnCompleteListener{
+            //https://stackoverflow.com/questions/60689182/how-to-get-download-url-from-uploaded-files-using-firebase
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+
+                Log.d("LINK", "DOWNLOAD LINK CLIENT: ${downloadUri}")
+            } else {
+
+            }
+        }
+
+        val contractorSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+        var contractorSignUploadTask:StorageTask<*>
+        contractorSignUploadTask = contractorSignFileRef.putFile(contractorSignUri!!)
+        contractorSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if(!task.isSuccessful){
+                task.exception?.let {
+                    throw it
+                }
+            }
+            contractorSignFileRef.downloadUrl
+            
+        }).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+
+                Log.d("LINK", "DOWNLOAD LINK CONTRACTOR: ${downloadUri}")
+            } else {
+
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Default){
+
+            val clientSignUrl = clientSignUploadTask.await().toString()
+            val contractorSignUrl = contractorSignUploadTask.await().toString()
+
+            if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
+                val signaturesMap = HashMap<String, Any>()
+                signaturesMap["contractorSignUri"] = contractorSignUrl
+                signaturesMap["clientSignUri"] = clientSignUrl
+                usersRef!!.updateChildren(signaturesMap)
+            }
+
+            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
+            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
+
+            saveContractsToDB(clientSignUrl, contractorSignUrl)
+        }
+    }
 
 
 
-                if(it.isSuccessful) {
+//    private fun uploadUserImages() {
+//        val progressBar = ProgressDialog(this)
+//
+//        progressBar.setMessage("Uploading image, Please wait...")
+//        progressBar.setTitle("Image Upload")
+//        progressBar.show()
+//
+//        val clientSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+//        var clientSignUploadTask:StorageTask<*>
+//        var clientSignUploadUri:Uri? = null
+//        clientSignUploadTask = clientSignFileRef.putFile(clientSignUri!!)
+//        clientSignUploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//            if (!task.isSuccessful) {
+//                task.exception?.let {
+//                    throw it
+//                }
+//            }
+//            //clientSignFileRef.downloadUrl
+//
+//            // Continue with the task to get the download URL
+//            return@Continuation clientSignFileRef.downloadUrl
+//
+//        }).addOnCompleteListener(OnCompleteListener<Uri> { task ->
+//            if (task.isSuccessful) {
+//                clientSignUploadUri = task.result!!
+//                val downloadURL = clientSignUploadUri.toString()
+//
+//                Log.d("LINK", "CLIENT LINK: ${downloadURL}")
+//
+//
+//
+//            } else {
+//
+//                Toast.makeText(this, "Error has ocurred", Toast.LENGTH_LONG).show()
+//
+//            }
+//        })
+//
+//
+//        val contractorSignFileRef = storageRef!!.child(
+//            System.currentTimeMillis().toString() + ".jpg"
+//        )
+//        var contractorSignUploadTask:StorageTask<*>
+//        var contractorSignUploadUri:Uri? = null
+//
+//        contractorSignUploadTask = contractorSignFileRef.putFile(contractorSignUri!!)
+//
+//        contractorSignUploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//
+//            if (!task.isSuccessful) {
+//                task.exception?.let {
+//                    throw it
+//                }
+//            }
+//
+//            // Continue with the task to get the download URL
+//            return@Continuation contractorSignFileRef.downloadUrl
+//
+//          //  contractorSignFileRef.downloadUrl
+//
+//            // return@Continuation contractorSignFileRef.downloadUrl
+//        }).addOnCompleteListener(OnCompleteListener<Uri> { task ->
+//            if (task.isSuccessful) {
+//              contractorSignUploadUri = task.result!!
+//                val downloadURL = contractorSignUploadUri.toString()
+//
+//                Log.d("LINK", "CONTRACTOR LINK: ${downloadURL}")
+//
+//            } else {
+//
+//                Toast.makeText(this, "Error has ocurred", Toast.LENGTH_LONG).show()
+//
+//            }
+//        })
+//
+////        lifecycleScope.launch(Dispatchers.Default){
+////
+////           // val clientSignUrl = clientSignUploadTask.await().toString()
+////            //val contractorSignUrl = contractorSignUploadTask.await().toString()
+////
+////            val   clientSignUrl = clientSignUploadUri.toString()
+////            val contractorSignUrl = contractorSignUploadUri.toString()
+////
+////
+////
+////            if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
+////                val signaturesMap = HashMap<String, Any>()
+////                signaturesMap["contractorSignUri"] = contractorSignUrl
+////                signaturesMap["clientSignUri"] = clientSignUrl
+////
+////                usersRef!!.updateChildren(signaturesMap)
+////            }
+////            saveContractsToDB(clientSignUrl, contractorSignUrl)
+////        }
+//
+//
+//
+//
+//        lifecycleScope.launch(Dispatchers.Default){
+//
+//            // val clientSignUrl = clientSignUploadTask.await().toString()
+//            //val contractorSignUrl = contractorSignUploadTask.await().toString()
+//
+//            val   clientSignUrl = clientSignUploadUri.toString()
+//            val contractorSignUrl = contractorSignUploadUri.toString()
+//
+//
+//
+//            if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
+//                val signaturesMap = HashMap<String, Any>()
+//                signaturesMap["contractorSignUri"] = contractorSignUrl
+//                signaturesMap["clientSignUri"] = clientSignUrl
+//
+//                usersRef!!.updateChildren(signaturesMap)
+//            }
+//            saveContractsToDB(clientSignUrl, contractorSignUrl)
+//        }
+//    }
+//
+//
 
 
-                    it.result!!.addOnSuccessListener{ task ->
-
-                        var downloadUrl = task.toString()
-                        Log.d("CaptureSignature", "Download Url: ${downloadUrl}")
-
-
-                        //==========client signature
-                        if(isUserOrContractor ==  WhichButton.CLIENT_SIGN.ordinal ) {
-                            val mapClientSignature = HashMap<String, Any>()
-                            mapClientSignature["clientSignUri"] = downloadUrl
-                            usersRef!!.updateChildren(mapClientSignature)
-
-
-                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
-
-                        }
 
 
 
-//                        } else {
-//                            //====Contractor Signature====
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    //======UPLOAD IMAGE====
+//    private fun uploadUserImages() {
+//        val progressBar = ProgressDialog(this)
+//
+//        progressBar.setMessage("Uploading image, Please wait...")
+//        progressBar.setTitle("Image Upload")
+//        progressBar.show()
+//
+//        if(clientSignUri != null) {
+//
+//            //https://stackoverflow.com/questions/61050721/download-url-is-getting-as-com-google-android-gms-tasks-zzu441942b-firebase-s/61061743#61061743
+//
+//            //unique Id, so that image is not replaced for multiple upload
+//            //storing image by this name
+//
+//            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+//
+//            var uploadTask:StorageTask<*>
+//
+//            uploadTask = fileRef.putFile(clientSignUri!!)
+//
+//            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//                if(!task.isSuccessful){
+//                    task.exception?.let {
+//                        throw it
+//
+//                    }
+//
+//
+//                }
+//
+//                //return the download url
+//                return@Continuation fileRef.downloadUrl
+//            }).addOnCompleteListener{
+//
+//
+//
+//                if(it.isSuccessful) {
+//
+//
+//                    it.result!!.addOnSuccessListener{ task ->
+//
+//                        var downloadUrl = task.toString()
+//                        Log.d("CaptureSignature", "Download Url: ${downloadUrl}")
+//
+//
+//                        //==========client signature
+//                        if(isUserOrContractor ==  WhichButton.CLIENT_SIGN.ordinal ) {
+//                            val mapClientSignature = HashMap<String, Any>()
+//                            mapClientSignature["clientSignUri"] = downloadUrl
+//                            usersRef!!.updateChildren(mapClientSignature)
+//
+//
+//                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
+//
+//                        }
+//
+//
+//
+////                        } else {
+////                            //====Contractor Signature====
+////                            val mapContractorSignature = HashMap<String, Any>()
+////                            mapContractorSignature["contractorSignUri"] = downloadUrl
+////
+////                            usersRef!!.updateChildren(mapContractorSignature)
+////
+////                            //change cover to default
+////
+////                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
+////
+////
+////
+////                        }
+//
+//
+//
+//                        clientSignUrl = downloadUrl
+//
+//                    }
+//
+//
+//
+//
+//                    //=======dismiss progress bar========
+//                    progressBar.dismiss()
+//
+//                }
+//            }
+//
+//        }
+//
+//
+//
+//
+//        if(contractorSignUri != null) {
+//
+//            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+//
+//            var uploadTask:StorageTask<*>
+//
+//            uploadTask = fileRef.putFile(contractorSignUri!!)
+//
+//
+//            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//                if(!task.isSuccessful){
+//                    task.exception?.let {
+//                        throw it
+//
+//                    }
+//
+//
+//                }
+//
+//                //return the download url
+//                // return@Continuation fileRef.downloadUrl
+//
+//                fileRef.downloadUrl
+//
+//            }).addOnCompleteListener{
+//
+//                if(it.isSuccessful) {
+//
+//                    it.result!!.addOnSuccessListener { task ->
+//
+//                        var myUri = task.toString()
+//                        //  print("$myUri")
+//
+//                        Log.d("ContractorSignature", "Download CONTRACTOR Url: ${myUri}")
+//
+//
+//                        Log.d("ContractorSignature", "Download CLIENT Url: ${clientSignUrl}")
+//
+//
+//
+//                        //==========client signature
+//                        if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
 //                            val mapContractorSignature = HashMap<String, Any>()
-//                            mapContractorSignature["contractorSignUri"] = downloadUrl
+//                            mapContractorSignature["contractorSignUri"] = myUri
 //
 //                            usersRef!!.updateChildren(mapContractorSignature)
 //
-//                            //change cover to default
+//
 //
 //                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
 //
 //
 //
 //                        }
-
-                        //saveContractsToDB(downloadUrl, "")
-
-                        saveContractsToDB(downloadUrl, "")
-
-                        clientSignUrl = downloadUrl
-
-                    }
-
-
-
-
-                    //=======dismiss progress bar========
-                    progressBar.dismiss()
-
-                }
-            }
-
-        }
-
-
-
-
-        if(contractorSignUri != null) {
-
-            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-
-            var uploadTask:StorageTask<*>
-
-            uploadTask = fileRef.putFile(contractorSignUri!!)
-
-
-            uploadTask.continueWith(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                if(!task.isSuccessful){
-                    task.exception?.let {
-                        throw it
-
-                    }
-
-
-                }
-
-                //return the download url
-                // return@Continuation fileRef.downloadUrl
-
-                fileRef.downloadUrl
-
-            }).addOnCompleteListener{
-
-                if(it.isSuccessful) {
-
-                    it.result!!.addOnSuccessListener { task ->
-
-                        var myUri = task.toString()
-                        //  print("$myUri")
-
-                        Log.d("ContractorSignature", "Download CONTRACTOR Url: ${myUri}")
-
-
-                        Log.d("ContractorSignature", "Download CLIENT Url: ${clientSignUrl}")
-
-
-
-                        //==========client signature
-                        if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
-                            val mapContractorSignature = HashMap<String, Any>()
-                            mapContractorSignature["contractorSignUri"] = myUri
-
-                            usersRef!!.updateChildren(mapContractorSignature)
-
-
-
-                            //isUserOrContractor = WhichButton.DEFAULT.ordinal
-
-
-
-                        }
-
-
-                        saveContractsToDB(clientSignUrl!!, myUri)
-
-                    }
-
-                }
-            }
-
-
-
-        }
-
-
-
-
-    }
+//
+//
+//                        Log.d("ContractorSignature", "Download CONTRACTOR Url: ${myUri}")
+//
+//
+//                        Log.d("ContractorSignature", "Download CLIENT Url: ${clientSignUrl}")
+//
+//
+//
+//                        saveContractsToDB(clientSignUrl!!, myUri)
+//
+//                    }
+//
+//                }
+//            }
+//
+//
+//
+//        }
+//
+//
+//
+//
+//    }
 
 
 
 
     private fun saveContractsToDB(clientSignImageUri: String, contractorSignImageUri: String) {
-
-//        mProgressBar!!.setMessage("Saving Contract...")
-//        mProgressBar!!.show()
 
 
         val currentUserId  = FirebaseAuth.getInstance().uid ?: return
@@ -408,19 +540,19 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
        // val reference = FirebaseDatabase.getInstance().getReference("/user-signatures/$currentUserId").push() //to push will generate automatic node for us in rtd
 
         val userContract = UserContract(
-                usersRef!!.key!!,
-                userReturedContracts!!.clientName,
-                userReturedContracts!!.clientAddress,
-                userReturedContracts!!.clientDate,
-                userReturedContracts!!.clientDesc,
-                currentUserId,
-                profileLogoUri,
-                clientSignImageUri,
-                contractorSignImageUri,
-                userReturedContracts!!.clientPrice,
-                userReturedContracts!!.companyName,
-                userReturedContracts!!.companyAddress,
-                userReturedContracts!!.companyEmail
+            usersRef!!.key!!,
+            userReturedContracts!!.clientName,
+            userReturedContracts!!.clientAddress,
+            userReturedContracts!!.clientDate,
+            userReturedContracts!!.clientDesc,
+            currentUserId,
+            profileLogoUri,
+            clientSignImageUri,
+            contractorSignImageUri,
+            userReturedContracts!!.clientPrice,
+            userReturedContracts!!.companyName,
+            userReturedContracts!!.companyAddress,
+            userReturedContracts!!.companyEmail
 
         )
 
@@ -454,7 +586,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
-    //submit_signature_btn
+
 
     override fun onSignatureCaptured(bitmap: Bitmap, fileUri: String) {
 
@@ -482,7 +614,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
             Log.d("CaptureSignature", "CONTRACTOR  BITMAP: ${bitmap} ")
 
-            contractorSignUri = getImageUriFromBitmap(this,bitmap)
+            contractorSignUri = getImageUriFromBitmap(this, bitmap)
             contractorFileName = fileUri
 
             Log.d("CaptureSignature", " Contractor BitmapUri ${contractorSignUri}")
@@ -509,21 +641,15 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         val bytes = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val path = MediaStore.Images.Media.insertImage(
-                context.contentResolver,
-                bitmap,
-                "Title",
-                null
+            context.contentResolver,
+            bitmap,
+            "Title",
+            null
         )
         return Uri.parse(path.toString())
     }
 
 
-//    fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
-//        val bytes = ByteArrayOutputStream()
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-//        val path = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
-//        return Uri.parse(path.toString())
-//    }
 
 
 
@@ -532,30 +658,30 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     private val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
 
     private fun checkPermissionREAD_EXTERNAL_STORAGE(
-            context: Context?
+        context: Context?
     ): Boolean {
         val currentAPIVersion = Build.VERSION.SDK_INT
         return if (currentAPIVersion >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(
-                            context!!,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
+                    context!!,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                (context as Activity?)!!,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                        )
+                        (context as Activity?)!!,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
                 ) {
                     showDialog(
-                            "External Storage", context,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        "External Storage", context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
                     )
                 } else {
                     ActivityCompat
                             .requestPermissions(
-                                    (context as Activity?)!!,
-                                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                                (context as Activity?)!!,
+                                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
                             )
                 }
                 false
@@ -569,20 +695,20 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
     fun showDialog(
-            msg: String, context: Context,
-            permission: String
+        msg: String, context: Context,
+        permission: String
     ) {
         val alertBuilder: AlertDialog.Builder =  AlertDialog.Builder(context)
         alertBuilder.setCancelable(true)
         alertBuilder.setTitle("Permission Necessary")
         alertBuilder.setMessage("$msg permission is necessary to enable the App capture signatures")
         alertBuilder.setPositiveButton(android.R.string.yes,
-                DialogInterface.OnClickListener { dialog, which ->
-                    ActivityCompat.requestPermissions(
-                            (context as Activity?)!!, arrayOf(permission),
-                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
-                    )
-                })
+            DialogInterface.OnClickListener { dialog, which ->
+                ActivityCompat.requestPermissions(
+                    (context as Activity?)!!, arrayOf(permission),
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                )
+            })
         val alert: AlertDialog = alertBuilder.create()
         alert.show()
     }
@@ -605,9 +731,9 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -616,13 +742,13 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 // do your stuff
             } else {
                 Toast.makeText(
-                        this@CaptureSignaturesActivity, "GET_ACCOUNTS Denied",
-                        Toast.LENGTH_SHORT
+                    this@CaptureSignaturesActivity, "GET_ACCOUNTS Denied",
+                    Toast.LENGTH_SHORT
                 ).show()
             }
             else -> super.onRequestPermissionsResult(
-                    requestCode, permissions!!,
-                    grantResults
+                requestCode, permissions!!,
+                grantResults
             )
         }
     }
