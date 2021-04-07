@@ -278,15 +278,12 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
             if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
                 val signaturesMap = HashMap<String, Any>()
-                signaturesMap["contractorSignUri"] = contractorSignUri.toString()
-                signaturesMap["clientSignUri"] = clientSignUri.toString()
+                signaturesMap["contractorSignUri"] = clientSignUrl
+                signaturesMap["clientSignUri"] = contractorSignUrl
                 usersRef!!.updateChildren(signaturesMap)
             }
 
-            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
-            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
-
-            saveContractsToDB(clientSignUri.toString(), contractorSignUri.toString())
+            saveContractsToDB(clientSignUrl, contractorSignUrl)
         }
     }
 
