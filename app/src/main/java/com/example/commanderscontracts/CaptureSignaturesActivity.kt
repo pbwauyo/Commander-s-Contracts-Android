@@ -37,7 +37,10 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_capture_signatures.*
 import kotlinx.android.synthetic.main.activity_signature.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -127,7 +130,11 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             Toast.makeText(this, "Submit Sign tapped", Toast.LENGTH_LONG).show()
 
 
-            uploadUserImages()
+
+                 uploadUserImages()
+
+
+
 
 
         }
@@ -140,13 +147,72 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
 
 
+//
+//    private fun uploadUserImages() {
+//        val progressBar = ProgressDialog(this)
+//
+//        progressBar.setMessage("Uploading image, Please wait...")
+//        progressBar.setTitle("Image Upload")
+//        progressBar.show()
+//
+//        val clientSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+//        var clientSignUploadTask:StorageTask<*>
+//        clientSignUploadTask = clientSignFileRef.putFile(clientSignUri!!)
+//        clientSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//            if(!task.isSuccessful){
+//                task.exception?.let {
+//                    throw it
+//                }
+//            }
+//            clientSignFileRef.downloadUrl
+//        }).addOnCompleteListener{
+//
+//        }
+//
+//        val contractorSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+//        var contractorSignUploadTask:StorageTask<*>
+//        contractorSignUploadTask = contractorSignFileRef.putFile(contractorSignUri!!)
+//        contractorSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+//            if(!task.isSuccessful){
+//                task.exception?.let {
+//                    throw it
+//                }
+//            }
+//            contractorSignFileRef.downloadUrl
+//        }).addOnCompleteListener{
+//
+//        }
+//
+//        lifecycleScope.launch(Dispatchers.Default){
+//            val clientSignUrl = clientSignUploadTask.await().toString()
+//
+//            val contractorSignUrl = contractorSignUploadTask.await().toString()
+//
+//
+//            Log.d("TASK", "CONTRACTOR SIGN Url: ${contractorSignUrl}")
+//            Log.d("TASK", "CLIENT SIGN Url: ${clientSignUrl}")
+//
+//            if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
+//                val signaturesMap = HashMap<String, Any>()
+//                signaturesMap["contractorSignUri"] = contractorSignUrl
+//                signaturesMap["clientSignUri"] = clientSignUrl
+//                usersRef!!.updateChildren(signaturesMap)
+//            }
+//
+//            saveContractsToDB(clientSignUrl, contractorSignUrl)
+//        }
+//    }
+
+
+
+
 
 
     private fun uploadUserImages() {
         val progressBar = ProgressDialog(this)
 
         progressBar.setMessage("Uploading image, Please wait...")
-        progressBar.setTitle("Image Upload")
+       // progressBar.setTitle("Image Upload")
         progressBar.show()
 
         val clientSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
@@ -163,9 +229,11 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
             //https://stackoverflow.com/questions/60689182/how-to-get-download-url-from-uploaded-files-using-firebase
             if (task.isSuccessful) {
-                val downloadUri = task.result
+               // val downloadUri = task.result
 
-                Log.d("LINK", "DOWNLOAD LINK CLIENT: ${downloadUri}")
+                clientSignUri = task.result
+
+                Log.d("LINK", "DOWNLOAD LINK CLIENT: ${clientSignUri}")
             } else {
 
             }
@@ -181,12 +249,14 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 }
             }
             contractorSignFileRef.downloadUrl
-            
+
         }).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val downloadUri = task.result
+                //val downloadUri = task.result
+                    contractorSignUri = task.result
 
-                Log.d("LINK", "DOWNLOAD LINK CONTRACTOR: ${downloadUri}")
+                Log.d("LINK", "DOWNLOAD LINK CONTRACTOR: ${contractorSignUri}")
+
             } else {
 
             }
@@ -197,17 +267,25 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             val clientSignUrl = clientSignUploadTask.await().toString()
             val contractorSignUrl = contractorSignUploadTask.await().toString()
 
+            Log.d("LINK", "CLIENT(clientSignUrl): ${clientSignUri}")
+            Log.d("LINK", "CONTRACTOR(contractorSignUrl): ${contractorSignUri}")
+
+
+            delay(1000)
+
+
+
             if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
                 val signaturesMap = HashMap<String, Any>()
-                signaturesMap["contractorSignUri"] = contractorSignUrl
-                signaturesMap["clientSignUri"] = clientSignUrl
+                signaturesMap["contractorSignUri"] = contractorSignUri.toString()
+                signaturesMap["clientSignUri"] = clientSignUri.toString()
                 usersRef!!.updateChildren(signaturesMap)
             }
 
-            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
-            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
+//            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
+//            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
 
-            saveContractsToDB(clientSignUrl, contractorSignUrl)
+            saveContractsToDB(clientSignUri.toString(), contractorSignUri.toString())
         }
     }
 
