@@ -272,7 +272,7 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
             Log.d("LINK", "CLIENT(clientSignUrl): ${clientSignUri}")
             Log.d("LINK", "CONTRACTOR(contractorSignUrl): ${contractorSignUri}")
 
-
+//===============Delay for 1s and continue(This will wait for the results) ====
             delay(1000)
 
 
