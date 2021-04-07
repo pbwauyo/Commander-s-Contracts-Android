@@ -218,9 +218,11 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         progressBar.show()
 
         val clientSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-        var clientSignUploadTask:StorageTask<*>
-        clientSignUploadTask = clientSignFileRef.putFile(clientSignUri!!)
-        clientSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+        val clientSignUploadTask = clientSignFileRef.putFile(clientSignUri!!).addOnFailureListener {
+            //LOG ERROR HERE INCASE OF ERROR DURING UPLOAD
+        }
+
+        val clientDownloadUrlTask = clientSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
             if(!task.isSuccessful){
                 task.exception?.let {
                     throw it
@@ -242,9 +244,10 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
         }
 
         val contractorSignFileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-        var contractorSignUploadTask:StorageTask<*>
-        contractorSignUploadTask = contractorSignFileRef.putFile(contractorSignUri!!)
-        contractorSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
+        val contractorSignUploadTask = contractorSignFileRef.putFile(contractorSignUri!!).addOnFailureListener {
+            //LOG ERROR HERE INCASE OF ERROR DURING UPLOAD
+        }
+        val contractorDownloadUrlTask = contractorSignUploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task ->
             if(!task.isSuccessful){
                 task.exception?.let {
                     throw it
@@ -266,15 +269,11 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
 
         lifecycleScope.launch(Dispatchers.Default){
 
-            val clientSignUrl = clientSignUploadTask.await().toString()
-            val contractorSignUrl = contractorSignUploadTask.await().toString()
+            val clientSignUrl = clientDownloadUrlTask.await().toString()
+            val contractorSignUrl = contractorDownloadUrlTask.await().toString()
 
-            Log.d("LINK", "CLIENT(clientSignUrl): ${clientSignUri}")
-            Log.d("LINK", "CONTRACTOR(contractorSignUrl): ${contractorSignUri}")
-
-//===============Delay for 1s and continue(This will wait for the results) ====
-            delay(1000)
-
+            Log.d("LINK", "CLIENT: $clientSignUrl")
+            Log.d("LINK", "CONTRACTOR: $contractorSignUrl")
 
 
             if(isUserOrContractor ==  WhichButton.CONTRACTOR_SIGN.ordinal ){
@@ -284,8 +283,8 @@ class CaptureSignaturesActivity : AppCompatActivity(),OnSignedCaptureListener {
                 usersRef!!.updateChildren(signaturesMap)
             }
 
-//            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
-//            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
+            Log.d("LINK", "CLIENT LINK: ${clientSignUrl}")
+            Log.d("LINK", "CONTRACTOR LINK: ${contractorSignUrl}")
 
             saveContractsToDB(clientSignUri.toString(), contractorSignUri.toString())
         }
